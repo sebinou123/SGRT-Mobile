@@ -70,7 +70,8 @@ public class consultPanel extends AppCompatActivity {
 
     //
     //private static final String url = "http://192.168.1.8/myhost-exemple/data.php";
-    private static final String url = "http://172.20.33.43:52567/SGRT/public/";
+    //private static final String url = "http://172.20.33.43:52567/SGRT/public/";
+    private static final String url = "https://acces.cegeplimoilou.ca/proxy/http/www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
 
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
 
@@ -251,7 +252,7 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(consultPanel.this,response,Toast.LENGTH_LONG).show();
+                        Toast.makeText(consultPanel.this,response,Toast.LENGTH_LONG).show();/**
                         ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(response);
                         if(ParseJSONChoiceFait.nbChoix[0].matches(consultPanel.NB_CHOICE_NEED))
                         {
@@ -262,7 +263,7 @@ public class consultPanel extends AppCompatActivity {
                             TextView txtTemp = new TextView(tblChoice.getContext());
                             txtTemp.setText(getResources().getString(R.string.errorChoice));
                             tblChoice.addView(txtTemp);
-                        }
+                        }*/
                     }
                 },
                 new Response.ErrorListener() {
@@ -276,7 +277,7 @@ public class consultPanel extends AppCompatActivity {
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("ensId","1");
-                params.put("tache_tac","1");
+               // params.put("tac_id","1");
                 return params;
             }
 
