@@ -1,0 +1,130 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:2:1-45:12
+	package
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:3:2-45
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+	android:versionName
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:3:71-96
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+	android:versionCode
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:3:46-70
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.GET_ACCOUNTS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:4:2-68
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:4:19-65
+uses-permission#android.permission.USE_CREDENTIALS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:5:2-71
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:5:19-68
+uses-permission#android.permission.MANAGE_ACCOUNTS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:6:2-71
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:6:19-68
+uses-permission#android.permission.AUTHENTICATE_ACCOUNTS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:7:2-77
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:7:19-74
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:8:2-64
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:8:19-61
+uses-permission#android.permission.WRITE_SETTINGS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:9:2-70
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:9:19-67
+uses-permission#android.permission.WRITE_SECURE_SETTINGS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:10:2-77
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:10:19-74
+uses-permission#android.permission.READ_CONTACTS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:11:2-69
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:11:19-66
+uses-permission#android.permission.WRITE_CONTACTS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:12:2-70
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:12:19-67
+uses-permission#android.permission.READ_SYNC_STATS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:13:2-71
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:13:19-68
+uses-permission#android.permission.READ_SYNC_SETTINGS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:14:2-74
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:14:19-71
+uses-permission#android.permission.WRITE_SYNC_SETTINGS
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:15:2-75
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:15:19-72
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:16:2-78
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:16:19-75
+application
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:2-43:16
+	android:label
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:45-77
+	android:debuggable
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:78-104
+	android:icon
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:15-44
+service#de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticationService
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:18:3-26:13
+	android:exported
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:20:4-27
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:19:4-92
+intent-filter#android.accounts.AccountAuthenticator
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:21:4-23:20
+action#android.accounts.AccountAuthenticator
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:22:5-68
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:22:13-65
+meta-data#android.accounts.AccountAuthenticator
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:24:4-25:45
+	android:resource
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:25:5-42
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:24:15-67
+service#de.danielweisser.android.ldapsync.syncadapter.SyncService
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:27:3-34:13
+	android:exported
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:28:4-27
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:27:12-84
+intent-filter#android.content.SyncAdapter
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:29:4-31:20
+action#android.content.SyncAdapter
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:30:5-58
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:30:13-55
+meta-data#android.content.SyncAdapter
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:32:4-33:43
+	android:resource
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:33:5-40
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:32:15-57
+activity#de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:35:3-42:14
+	android:label
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:37:4-45
+	android:excludeFromRecents
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:37:46-79
+	android:name
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:36:4-92
+uses-sdk
+ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:44:2-40
+	android:targetSdkVersion
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		ADDED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml:44:12-37
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\1232161\Documents\SGRT\lDAPSync\src\main\AndroidManifest.xml

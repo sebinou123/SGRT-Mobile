@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">SGRT</string>
+    <string name="passwordlbl">Password :</string>
+    <string name="usernamelbl">Username :</string>
+    <string name="loginbtnlbl">Log in</string>
+    <string name="action_settings">Settings</string>
+    <string name="errorPassText">The password is not valid</string>
+    <string name="errorUserText">The username is not valid</string>
+    <string name="title_activity_consultation_panel">consultationPanel</string>
+    <string name="title_activity_consult_panel">consultPanel</string>
+    <string name="tab1">Ball</string>
+    <string name="tab2">Choice</string>
+    <string name="tab3">Counter</string>
+    <string name="nolbl">Number</string>
+    <string name="titrelbl">Course title</string>
+    <string name="prioritylbl">Priority</string>
+    <string name="languagelbl">Language :</string>
+    <string name="french">French</string>
+    <string name="english">English</string>
+    <string name="returnbtn">return</string>
+    <string name="errorChoice">You did not made your choice of task for the current year, please go to SGRT.com to make your choice.</string>
+    <string name="lstBille1">Ball only</string>
+    <string name="lstBille2">Ball with counter</string>
+    <string name="lstCompteur1">Counter only</string>
+    <string name="lstCompteur2">Counter with ball</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>

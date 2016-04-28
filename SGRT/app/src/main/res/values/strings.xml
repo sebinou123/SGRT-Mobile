@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">SGRT</string>
+    <string name="passwordlbl">Mot de passe :</string>
+    <string name="usernamelbl">Nom d\'utilisateur :</string>
+    <string name="loginbtnlbl">Connection</string>
+    <string name="action_settings">Configuration</string>
+    <string name="errorPassText">Le mot de passe entré n\'est pas valide</string>
+    <string name="errorUserText">Le nom d\'utilisateur entré n\'est pas valide </string>
+    <string name="title_activity_consultation_panel">consultationPanel</string>
+    <string name="title_activity_consult_panel">consultPanel</string>
+    <string name="tab1">Billes</string>
+    <string name="tab2">Choix</string>
+    <string name="tab3">Compteur</string>
+    <string name="nolbl">Numéro</string>
+    <string name="titrelbl">Titre du cours</string>
+    <string name="prioritylbl">Priorité</string>
+    <string name="languagelbl">Langage :</string>
+    <string name="french">Français</string>
+    <string name="english">Anglais</string>
+    <string name="returnbtn">retour</string>
+    <string name="errorChoice">Vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT.com pour faire vos choix.</string>
+    <string name="lstBille1">Bille seulement</string>
+    <string name="lstBille2">Bille avec compteur</string>
+    <string name="lstCompteur1">Compteur seulement</string>
+    <string name="lstCompteur2">Compteur avec bille</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>

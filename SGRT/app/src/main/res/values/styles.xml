@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorBlack</item>
+        <item name="colorPrimaryDark">@color/colorBlack</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="CustomBar">
+        <item name="android:background">@color/colorBlack</item>
+    </style>
+
+    <style name="CustomText">
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+
+    <style name="CustomButton">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">8pt</item>
+        <item name="android:background">@drawable/btnlogin</item>
+    </style>
+
+    <style name="CustomTextField">
+        <item name="android:background">@drawable/textfield</item>
+    </style>
+
+    <style name="CustomErrorTextField">
+        <item name="android:textColor">@color/colorRed</item>
+    </style>
+
+    <style name="CustomTextLanguage">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">22dp</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>
