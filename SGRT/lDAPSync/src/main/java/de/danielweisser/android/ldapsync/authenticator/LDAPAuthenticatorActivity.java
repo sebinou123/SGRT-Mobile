@@ -240,8 +240,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 * Called when response is received from the server for confirm credentials request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which
 	 * is sent back to the caller.
 	 * 
-	 * @param the
-	 *            confirmCredentials result.
+	 * @param result
 	 */
 	protected void finishConfirmCredentials(boolean result) {
 		Log.i(TAG, "finishConfirmCredentials()");

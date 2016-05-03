@@ -39,10 +39,6 @@ uses-permission#android.permission.WRITE_SETTINGS
 ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:9:2-70
 	android:name
 		ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:9:19-67
-uses-permission#android.permission.WRITE_SECURE_SETTINGS
-ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:10:2-77
-	android:name
-		ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:10:19-74
 uses-permission#android.permission.READ_CONTACTS
 ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:11:2-69
 	android:name
@@ -71,8 +67,6 @@ application
 ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:2-43:16
 	android:label
 		ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:45-77
-	android:debuggable
-		ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:78-104
 	android:icon
 		ADDED from C:\Users\1232161\Documents\SGRT-Mobile\SGRT\lDAPSync\src\main\AndroidManifest.xml:17:15-44
 service#de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticationService

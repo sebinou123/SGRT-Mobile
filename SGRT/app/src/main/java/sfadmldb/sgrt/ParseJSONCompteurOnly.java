@@ -5,7 +5,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by 1232161 on 2016-04-26.
+ *	This class parse the JSON file from the web service for the counter tab
+ *
+ *  @author Sébastien Fillion
+ *  @version 1.0
  */
 public class ParseJSONCompteurOnly {
 

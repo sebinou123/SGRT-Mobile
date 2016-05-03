@@ -10,6 +10,7 @@ public class user {
 
     private int id;
     private String name;
+    private String email;
 
     /**
      *	Constructor of user class without parameter
@@ -21,12 +22,14 @@ public class user {
      *
      * @param id - id of the user (Integer)
      * @param name - name of the user (String)
+     * @param email - email of the user (String)
      *
      */
-    public user(int id, String name)
+    public user(int id, String name,String email)
     {
         this.setId(id);
         this.setName(name);
+        this.setEmail(email);
     }
 
     /**
@@ -64,8 +67,28 @@ public class user {
      *
      * @return name - String
      */
-    private String getString()
+    private String getName()
     {
         return this.name;
+    }
+
+    /**
+     * Setter of the parameter email
+     *
+     * @param email - String
+     */
+    private void setEmail(String email)
+    {
+        this.email = email;
+    }
+
+    /**
+     * Getter of the parameter email
+     *
+     * @return email - String
+     */
+    private String getEmail()
+    {
+        return this.email;
     }
 }

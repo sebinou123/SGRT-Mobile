@@ -39,47 +39,55 @@ import java.util.Map;
  */
 public class consultPanel extends AppCompatActivity {
 
-    //
+    //The tab of each view ball, choice and counter
     TabHost tabHost;
 
-    //
+    //The current tab selected
     String currentTab;
 
-    //
+    //The current path on the server
+    String currentPath;
+
+    //The table to chow data
     TableLayout tblChoice;
     TableLayout tblCompteur;
     TableLayout tblBilles;
 
-    //
+    //The toolbar of the app
     Toolbar toolbar;
 
-    //
+    //Name of each tab
     String tab1name;
     String tab2name;
     String tab3name;
+
+    //String about the required number of choice
     static final String NB_CHOICE_NEED = "5";
-    String currentPath;
 
-    TextView t;
+    //The selected item in the list ball or counter
+    int currentListItemSelected;
 
+    //List for each view
     ListView lstBille;
     ListView lstCompteur;
 
+    //Array to put in listview
     private String[] arrayBille;
     private String[] arrayCompteur;
 
-    //
-    //private static final String url = "http://192.168.1.8/myhost-exemple/data.php";
+    //url to the server
+    public static final String url = "http://192.168.1.8/myhost-exemple/reponseChoix.php";
     //private static final String url = "http://172.20.33.43:52567/SGRT/public/";
-    private static final String url = "https://acces.cegeplimoilou.ca/proxy/http/www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
+    //private static final String url = "https://acces.cegeplimoilou.ca/proxy/http/www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
 
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
 
 
     /**
+     * Method called when the application start. This method set the view, instantiate every element and add them to the view. Also,
+     * he set the current language to the application. Add event handler when a button is pressed.
      *
-     *
-     * @param savedInstanceState
+     * @param savedInstanceState - a save of previous state, who can be reloaded by passing it to the method.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,9 +174,20 @@ public class consultPanel extends AppCompatActivity {
 
     }
 
+    /**
+     * Inner class who implements the OnItemClickListener for the button
+     */
     public class ListListener implements AdapterView.OnItemClickListener
     {
 
+        /**
+         *  Interface definition for a callback to be invoked when an item in this AdapterView has been clicked.
+         *
+         * @param parent - The AdapterView where the click happened.
+         * @param view -  The view within the AdapterView that was clicked (this will be a view provided by the adapter)
+         * @param position - The position of the view in the adapter.
+         * @param id -  The row id of the item that was clicked.
+         */
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -181,10 +200,14 @@ public class consultPanel extends AppCompatActivity {
 
                 if(itemValue.matches(getResources().getString(R.string.lstBille1)))
                 {
-                    //sendRequestPostBille1()
+                    currentListItemSelected = 1;
+                    //currentPath = "bille/########";
+                    //sendRequestPostBilleOnly();
                 }else if(itemValue.matches(getResources().getString(R.string.lstBille2)))
                 {
-                    //sendRequestPostBille2()
+                    currentListItemSelected = 2;
+                    //currentPath = "bille#########";
+                    //sendRequestPostBilleAndCompteur()
                 }else
                 {
                 }
@@ -197,10 +220,14 @@ public class consultPanel extends AppCompatActivity {
 
                 if(itemValue.matches(getResources().getString(R.string.lstCompteur1)))
                 {
-                    //sendRequestPostCompteur1()
+                    currentListItemSelected = 1;
+                    //currentPath = "compteur/########";
+                    //sendRequestPostCompteurOnly();
                 }else if(itemValue.matches(getResources().getString(R.string.lstCompteur2)))
                 {
-                    //sendRequestPostCompteur2()
+                    currentListItemSelected = 2;
+                    //currentPath = "compteur/########";
+                    //sendRequestPostCompteurAndBille()
                 }else
                 {
                 }
@@ -213,13 +240,14 @@ public class consultPanel extends AppCompatActivity {
     }
 
     /**
-     *
+     *  Inner class who implements the OnTabChangeListener for the tabhost
      */
     private class BarListener implements TabHost.OnTabChangeListener {
 
         /**
+         * Interface definition for a callback to be invoked when an tab in Tabhost has been clicked.
          *
-         * @param tabId
+         * @param tabId - Id of the selected tab
          */
         @Override
         public void onTabChanged(String tabId) {
@@ -227,24 +255,30 @@ public class consultPanel extends AppCompatActivity {
             if(tabId.matches(tab1name))
             {
                 currentTab = "1";
-                //currentPath = "bille/#######";
+
             }
             else if(tabId.matches(tab2name))
             {
                currentTab = "2";
                currentPath = "choix/choixStatus";
-               sendRequestPostChoix(currentPath);
+               //sendRequestPostChoix(currentPath);
             }
             else
             {
                 currentTab = "3";
-                //currentPath = "compteur/########";
+
             }
         }
     }
 
 
-
+    /**
+     * Method who send a request to get a response about if the user have made his choice.
+     * Return an error if the request fail or he didn't made his choice
+     * Call an other request if valid
+     *
+     * @param path - the path on the server
+     */
     private void sendRequestPostChoix(String path){
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
@@ -252,10 +286,13 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(consultPanel.this,response,Toast.LENGTH_LONG).show();/**
+
+
                         ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(response);
+                        pjcf.parseJSON();
                         if(ParseJSONChoiceFait.nbChoix[0].matches(consultPanel.NB_CHOICE_NEED))
                         {
+                            currentPath = "choix/getChoix";
                             sendRequestPostChoixValide(currentPath);
                         }
                         else
@@ -263,7 +300,7 @@ public class consultPanel extends AppCompatActivity {
                             TextView txtTemp = new TextView(tblChoice.getContext());
                             txtTemp.setText(getResources().getString(R.string.errorChoice));
                             tblChoice.addView(txtTemp);
-                        }*/
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -277,7 +314,7 @@ public class consultPanel extends AppCompatActivity {
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("ensId","1");
-               // params.put("tac_id","1");
+
                 return params;
             }
 
@@ -288,6 +325,13 @@ public class consultPanel extends AppCompatActivity {
 
     }
 
+    /**
+     * Method who send a request to get for a teacher all of his choice.
+     * Return an error if the request fail.
+     * Call showJSON to show the data on response.
+     *
+     * @param path - the path on the server
+     */
     private void sendRequestPostChoixValide(String path){
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
@@ -295,7 +339,6 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(consultPanel.this,response,Toast.LENGTH_LONG).show();
                         showJSON(response);
                     }
                 },
@@ -310,7 +353,6 @@ public class consultPanel extends AppCompatActivity {
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("ensId","1");
-                params.put("tache_tac","1");
                 return params;
             }
 
@@ -319,27 +361,70 @@ public class consultPanel extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-
     }
 
-    private void sendRequestPostCompteur(String path){
-
-    }
-
-    private void sendRequestPostBille(String path){
+    /**
+     * Method who send a request to get counter of each teacher on each course
+     * Return an error if the request fail.
+     * Call showJSON to show the data on response.
+     *
+     * @param path - the path on the server
+     */
+    private void sendRequestPostCompteurOnly(String path){
 
     }
 
     /**
+     * Method who send a request to get nomber of ball for each course for each teacher
+     * Return an error if the request fail.
+     * Call showJSON to show the data on response.
      *
+     * @param path - the path on the server
+     */
+    private void sendRequestPostBilleOnly(String path){
+
+    }
+
+    /**
+     * Method who send a request to get for each teacher the number of ball and counter for each course.
+     * Return an error if the request fail.
+     * Call showJSON to show the data on response.
      *
-     * @param json
+     * @param path - the path on the server
+     */
+    private void sendRequestPostBilleAndCompteur(String path){
+
+    }
+
+    /**
+     * Method who send a request to get for each teacher the number of ball and counter for each course.
+     * Return an error if the request fail.
+     * Call showJSON to show the data on response.
+     *
+     * @param path - the path on the server
+     */
+    private void sendRequestPostCompteurAndBille(String path){
+
+    }
+
+    /**
+     * Method to show the data according to the selected tab and list
+     *
+     * @param json - the json response
      */
     private void showJSON(String json){
 
         if(currentTab.matches("1")) {
-
-            ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
+            if(currentListItemSelected == 1)
+            {
+                ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
+                pjb.parseJSON();
+            }
+            else if(currentTab.matches("1"))
+            {
+                ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
+                pjbac.parseJSON();
+            }else{}
         }
         else if(currentTab.matches("2"))
         {
@@ -407,17 +492,27 @@ public class consultPanel extends AppCompatActivity {
             }
         }else if(currentTab.matches("3"))
         {
-            ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
+            if(currentListItemSelected == 1)
+            {
+                ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
+                pjc.parseJSON();
+            }
+            else if(currentTab.matches("1"))
+            {
+                ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
+                pjcab.parseJSON();
+            }else{}
+
         }
 
     }
 
     /**
+     *  Create the menu by binding the xml file with the good item
      *
+     * @param menu - the menu to create
      *
-     * @param menu
-     *
-     * @return
+     * @return boolean - creation of each menu item succeed or not
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -427,11 +522,11 @@ public class consultPanel extends AppCompatActivity {
     }
 
     /**
+     *  Specified what to do when the user selected an item in the menu.
      *
+     * @param item - item in the menu
      *
-     * @param item
-     *
-     * @return
+     * @return boolean - if the item is selected
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -449,6 +544,13 @@ public class consultPanel extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Set The default language at the end of the activity about the selection of prefered language
+     *
+     * @param requestCode - the code when requested
+     * @param resultCode -  the code when the request as ended
+     * @param data - data return at the end of the request
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setLangRecreate(Setting.langue);

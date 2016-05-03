@@ -3,6 +3,7 @@ package sfadmldb.sgrt;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -18,9 +19,20 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  *  This class manage the login to the application with the LDAP system use by the cegep.
@@ -50,9 +62,15 @@ public class login extends AppCompatActivity {
     private Button btnfr;
     private Button btnen;
 
-    static final int PICK_CONTACT_REQUEST = 1;  // The request code
+    //Request code for the call of the setting panel
+    static final int PICK_CONTACT_REQUEST = 1;
 
+    //Toolbar of the application
     Toolbar toolbar;
+
+    //Variable about the username and the password
+    String user;
+    String password;
 
 
 
@@ -123,10 +141,12 @@ public class login extends AppCompatActivity {
          * @param v - the view with the elements
          * @param event - the type of motion who trigger the event
          *
-         * @return boolean
+         * @return boolean - true if a button as been pressed
          */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+
+            boolean result = true;
 
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -148,11 +168,11 @@ public class login extends AppCompatActivity {
                 }
                 else
                 {
-
+                    result = false;
                 }
             }
 
-            return true;
+            return result;
         }
 
 
@@ -183,14 +203,14 @@ public class login extends AppCompatActivity {
 
         resetError();
 
-        String user = textUsername.getText().toString();
-        String pass = textPassword.getText().toString();
+        user = textUsername.getText().toString();
+        password = textPassword.getText().toString();
 
         if (!user.matches(""))
         {
-            if(!pass.matches(""))
+            if(!password.matches(""))
             {
-                verifyConnection(user,pass);
+                verifyConnection();
             }
             else
             {
@@ -201,7 +221,7 @@ public class login extends AppCompatActivity {
         {
             errorUsername.setText(R.string.errorUserText);
 
-            if(pass.matches("")) {
+            if(password.matches("")) {
                 errorPassword.setText(R.string.errorPassText);
             }
         }
@@ -217,26 +237,69 @@ public class login extends AppCompatActivity {
     }
 
     /**
-     *	This method make the connection with the LDAP server to determine if the user with the password exist in the database.
-     *  Create an object user with his information (id, name) if it's correct and the consult panel is instantiate.
-     *  Show an error if the user is not in the database
+     * Method to send request to the web server to get response about if the user is valid and exist in the LDAP directory
+     * Create an object user with his information (id, name, email) if it's correct and the consult panel is instantiate.
+     * Show an error if the user is not in the database
+     *
+     * @param path - the path on the server
      */
-    private void verifyConnection(String user, String pass) {
+    private void sendRequestPostConnection(String path){
 
-        if(true)
-        {
-            Intent intent = new Intent(this, consultPanel.class);
-            startActivity(intent);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, consultPanel.url + path ,
+                new Response.Listener<String>() {
 
-        }
+                    @Override
+                    public void onResponse(String response) {
+                        //ParseJSONLogin p = new ParseJSONLogin(response);
+                        //p.parseJSON();
+                        //user u = new user(p.token.####,p.token);
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(login.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user",user);
+                params.put("password", password);
+
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+
     }
 
     /**
+     *  This method instantiate the activity if the user is valid
+     */
+    private void verifyConnection() {
+
+            //sendRequestPostConnection("login/#######");
+
+            if(true)
+            {
+                Intent intent = new Intent(this, consultPanel.class);
+                startActivity(intent);
+
+            }
+    }
+
+    /**
+     *  Create the menu by binding the xml file with the good item
      *
+     * @param menu - the menu to create
      *
-     * @param menu
-     *
-     * @return
+     * @return boolean - creation of each menu item succeed or not
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -246,11 +309,11 @@ public class login extends AppCompatActivity {
     }
 
     /**
+     *  Specified what to do when the user selected an item in the menu.
      *
+     * @param item - item in the menu
      *
-     * @param item
-     *
-     * @return
+     * @return boolean - if the item is selected
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -268,6 +331,13 @@ public class login extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Set The default langage at the end of the activity about the selection of prefered langage
+     *
+     * @param requestCode - the code when requested
+     * @param resultCode -  the code when the request as ended
+     * @param data - data return at the end of the request
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setLangRecreate(Setting.langue);

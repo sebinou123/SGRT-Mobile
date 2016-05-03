@@ -12,6 +12,12 @@ import android.widget.Button;
 
 import java.util.Locale;
 
+/**
+ *  This class manage the prefered language, the user select a language and return to the previous activity
+ *
+ *  @author Sébastien Fillion
+ *  @version 1.0
+ */
 public class Setting extends AppCompatActivity {
 
     public static String langue = "";

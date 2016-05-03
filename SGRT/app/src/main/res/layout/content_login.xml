@@ -11,7 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="sfadmldb.sgrt.login"
-    tools:showIn="@layout/activity_login">
+    tools:showIn="@layout/activity_login"
+    android:id="@+id/layoutlogin">
 
     <LinearLayout
         android:orientation="vertical"
@@ -60,17 +61,23 @@
 
                 />
 
-            <EditText
-                style="@style/CustomTextField"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/usernametxt"
-                android:layout_marginTop="10dp"
-                android:layout_alignTop="@+id/usernamelbl"
-                android:layout_alignEnd="@+id/passwordtxt"
-                android:layout_above="@+id/passwordlbl"
-                android:layout_alignStart="@+id/loginBtn"
-                android:layout_weight="0.36" />
+                android:id="@+id/ScrollUser" >
+
+                <EditText
+                    style="@style/CustomTextField"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:maxLength="255"
+                    android:inputType="text"
+                    android:ems="10"
+                    android:id="@+id/usernametxt"
+                    />
+            </HorizontalScrollView>
+
         </LinearLayout>
 
         <LinearLayout
@@ -103,17 +110,24 @@
                 android:text="@string/passwordlbl"
                 android:id="@+id/passwordlbl"
 
-                 />
+                />
 
-            <EditText
-                style="@style/CustomTextField"
-                android:layout_width="fill_parent"
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/passwordtxt"
-                 />
+                android:id="@+id/Scrollpass" >
+
+                <EditText
+                    style="@style/CustomTextField"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:maxLength="255"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:id="@+id/passwordtxt" />
+            </HorizontalScrollView>
+
         </LinearLayout>
 
         <Button

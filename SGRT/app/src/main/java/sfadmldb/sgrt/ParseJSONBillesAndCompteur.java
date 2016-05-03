@@ -5,20 +5,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *	This class parse the JSON file from the web service for the choice tab to know the number of choice he did and the year
+ *  This class parse the JSON file from the web service for the ball tab
  *
  *  @author Sébastien Fillion
  *  @version 1.0
  */
-public class ParseJSONChoiceFait {
+public class ParseJSONBillesAndCompteur {
+
     //Parameter of the JSON file
-    public static String[] nbChoix;
-    public static String[] annee;
+    public static String[] no;
+    public static String[] titre;
+    public static String[] priority;
+
 
 
     //Column name of the JSON file
-    public static final String KEY_NB_CHOIX = "choixFait";
-    public static final String KEY_ANNEE = "tac_annee";
+    public static final String KEY_NO_COURS = "cou_no";
+    public static final String KEY_TITRE_COURS = "cou_titre";
+    public static final String KEY_PRIORITY_COURS = "chx_priorite";
 
     //
     private String json;
@@ -30,7 +34,7 @@ public class ParseJSONChoiceFait {
      *
      * @param json - the string JSON
      */
-    public ParseJSONChoiceFait(String json){
+    public ParseJSONBillesAndCompteur(String json){
 
         this.json = json;
     }
@@ -46,16 +50,17 @@ public class ParseJSONChoiceFait {
 
             arrayLength = jsonArray.length();
 
-            nbChoix = new String[jsonArray.length()];
-            annee = new String[jsonArray.length()];
-
+            no = new String[jsonArray.length()];
+            titre = new String[jsonArray.length()];
+            priority = new String[jsonArray.length()];
 
             for(int i=0;i<jsonArray.length();i++){
 
                 JSONObject e = jsonArray.getJSONObject(i);
 
-                nbChoix[i] = e.getString(KEY_NB_CHOIX);
-                annee[i] = e.getString(KEY_ANNEE);
+                priority[i] = e.getString(KEY_PRIORITY_COURS);
+                no[i] = e.getString(KEY_NO_COURS);
+                titre[i] = e.getString(KEY_TITRE_COURS);
 
             }
 
