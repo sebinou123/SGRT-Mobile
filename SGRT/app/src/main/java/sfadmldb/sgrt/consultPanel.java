@@ -20,6 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -76,9 +77,10 @@ public class consultPanel extends AppCompatActivity {
     private String[] arrayCompteur;
 
     //url to the server
-    public static final String url = "http://192.168.1.8/myhost-exemple/reponseChoix.php";
-    //private static final String url = "http://172.20.33.43:52567/SGRT/public/";
-    //private static final String url = "https://acces.cegeplimoilou.ca/proxy/http/www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
+    //public static final String url = "http://api.geonames.org/earthquakesJSON?north=44.1&south=-9.9&east=-22.4&west=55.2&username=demo";
+    //public static final String url = "http://192.168.1.8/myhost-exemple/reponseChoix.php";
+    //public static final String url = "http://172.20.33.43:52567/SGRT/public/home";
+     public static final String url = "http://www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/";
 
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
 
@@ -261,7 +263,7 @@ public class consultPanel extends AppCompatActivity {
             {
                currentTab = "2";
                currentPath = "choix/choixStatus";
-               //sendRequestPostChoix(currentPath);
+               sendRequestPostChoix(currentPath);
             }
             else
             {
@@ -281,13 +283,13 @@ public class consultPanel extends AppCompatActivity {
      */
     private void sendRequestPostChoix(String path){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
                 new Response.Listener<String>() {
 
                     @Override
                     public void onResponse(String response) {
-
-
+                        Toast.makeText(consultPanel.this, response, Toast.LENGTH_LONG).show();
+                        /**
                         ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(response);
                         pjcf.parseJSON();
                         if(ParseJSONChoiceFait.nbChoix[0].matches(consultPanel.NB_CHOICE_NEED))
@@ -300,7 +302,7 @@ public class consultPanel extends AppCompatActivity {
                             TextView txtTemp = new TextView(tblChoice.getContext());
                             txtTemp.setText(getResources().getString(R.string.errorChoice));
                             tblChoice.addView(txtTemp);
-                        }
+                        }*/
                     }
                 },
                 new Response.ErrorListener() {
@@ -315,6 +317,12 @@ public class consultPanel extends AppCompatActivity {
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("ensId","1");
 
+                return params;
+            }
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " + user.getUser().getToken());
                 return params;
             }
 
@@ -353,6 +361,11 @@ public class consultPanel extends AppCompatActivity {
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("ensId","1");
+                return params;
+            }
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " + user.getUser().getToken());
                 return params;
             }
 
@@ -420,7 +433,7 @@ public class consultPanel extends AppCompatActivity {
                 ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
                 pjb.parseJSON();
             }
-            else if(currentTab.matches("1"))
+            else if(currentListItemSelected == 2)
             {
                 ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
                 pjbac.parseJSON();
@@ -497,7 +510,7 @@ public class consultPanel extends AppCompatActivity {
                 ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
                 pjc.parseJSON();
             }
-            else if(currentTab.matches("1"))
+            else if(currentListItemSelected == 2)
             {
                 ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
                 pjcab.parseJSON();

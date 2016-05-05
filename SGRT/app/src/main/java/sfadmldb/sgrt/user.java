@@ -11,25 +11,24 @@ public class user {
     private int id;
     private String name;
     private String email;
+    private String token;
+
+    private static user INSTANCE;
 
     /**
      *	Constructor of user class without parameter
      */
-    public user(){}
+    private user(){}
 
-    /**
-     * Constructor of user class with parameter
-     *
-     * @param id - id of the user (Integer)
-     * @param name - name of the user (String)
-     * @param email - email of the user (String)
-     *
-     */
-    public user(int id, String name,String email)
+
+
+    public static user getUser()
     {
-        this.setId(id);
-        this.setName(name);
-        this.setEmail(email);
+        if (INSTANCE == null)
+        {
+            INSTANCE = new user();
+        }
+        return INSTANCE;
     }
 
     /**
@@ -37,7 +36,7 @@ public class user {
      *
      * @param id - Integer
      */
-    private void setId(int id)
+    public void setId(int id)
     {
         this.id = id;
     }
@@ -47,7 +46,7 @@ public class user {
      *
      * @return id - Integer
      */
-    private int getId()
+    public int getId()
     {
         return this.id;
     }
@@ -57,7 +56,7 @@ public class user {
      *
      * @param name - String
      */
-    private void setName(String name)
+    public void setName(String name)
     {
         this.name = name;
     }
@@ -67,7 +66,7 @@ public class user {
      *
      * @return name - String
      */
-    private String getName()
+    public String getName()
     {
         return this.name;
     }
@@ -77,7 +76,7 @@ public class user {
      *
      * @param email - String
      */
-    private void setEmail(String email)
+    public void setEmail(String email)
     {
         this.email = email;
     }
@@ -87,8 +86,28 @@ public class user {
      *
      * @return email - String
      */
-    private String getEmail()
+    public String getEmail()
     {
         return this.email;
+    }
+
+    /**
+     * Setter of the parameter email
+     *
+     * @param email - String
+     */
+    public void setToken(String email)
+    {
+        this.token = token;
+    }
+
+    /**
+     * Getter of the parameter email
+     *
+     * @return email - String
+     */
+    public String getToken()
+    {
+        return this.token;
     }
 }

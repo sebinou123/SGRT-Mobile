@@ -14,12 +14,11 @@ public class ParseJSONLogin {
 
     //Parameter of the JSON file
     public static String[] token;
-
-
-
+    public static String[] userConnected;
 
     //Column name of the JSON file
-    public static final String KEY_TOKEN = "token";
+    public static final String KEY_TOKEN = "jwt";
+    public static final String KEY_USER = "connected_user";
 
 
 
@@ -43,6 +42,7 @@ public class ParseJSONLogin {
      */
     protected void parseJSON(){
 
+
         JSONArray jsonArray=null;
         try {
             jsonArray = new JSONArray(json);
@@ -50,6 +50,7 @@ public class ParseJSONLogin {
             arrayLength = jsonArray.length();
 
             token = new String[jsonArray.length()];
+            userConnected = new String[jsonArray.length()];
 
 
             for(int i=0;i<jsonArray.length();i++){
@@ -57,7 +58,7 @@ public class ParseJSONLogin {
                 JSONObject e = jsonArray.getJSONObject(i);
 
                 token[i] = e.getString(KEY_TOKEN);
-
+                userConnected[i] = e.getString(KEY_USER);
 
             }
 

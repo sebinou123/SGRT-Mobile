@@ -23,12 +23,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,7 +74,7 @@ public class login extends AppCompatActivity {
     Toolbar toolbar;
 
     //Variable about the username and the password
-    String user;
+    String username;
     String password;
 
 
@@ -203,10 +208,10 @@ public class login extends AppCompatActivity {
 
         resetError();
 
-        user = textUsername.getText().toString();
+        username = textUsername.getText().toString();
         password = textPassword.getText().toString();
 
-        if (!user.matches(""))
+        if (!username.matches(""))
         {
             if(!password.matches(""))
             {
@@ -266,7 +271,7 @@ public class login extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("user",user);
+                params.put("user",username);
                 params.put("password", password);
 
                 return params;
@@ -279,12 +284,54 @@ public class login extends AppCompatActivity {
 
     }
 
+    public void loginRequest(String path){
+
+        JSONObject login = new JSONObject();
+        JSONObject result = new JSONObject();
+
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, consultPanel.url + path ,
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(login.this, response, Toast.LENGTH_LONG).show();
+                        ParseJSONLogin pjl = new ParseJSONLogin(response);
+                        pjl.parseJSON();
+                        user.getUser().setToken(ParseJSONLogin.token[0]);
+                        user.getUser().setEmail(username);
+                        user.getUser().setName(ParseJSONLogin.userConnected[0]);
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(login.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }){
+
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
+                params.put("password", password);
+                return params;
+            }
+
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+    }
+
+
     /**
      *  This method instantiate the activity if the user is valid
      */
     private void verifyConnection() {
 
-            //sendRequestPostConnection("login/#######");
+            //loginRequest("login/authenticate");
 
             if(true)
             {
