@@ -23,6 +23,12 @@
     <string name="lstBille2">Bille avec compteur</string>
     <string name="lstCompteur1">Compteur seulement</string>
     <string name="lstCompteur2">Compteur avec bille</string>
+    <string name="lblBandC">Bille / Compteur</string>
+    <string name="lblCandB">Compteur / Bille</string>
+    <string name="userExiste">Le nom d\'utilisateur \\ mot de passe est incorrect</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="choiceTitle">Voici vos choix pour la tâche de</string>
+    <string name="lblLogout">Déconnexion</string>
+    <string name="lblerrorWebService">Erreur lors du chargement des données</string>
     <string name="section_format">Hello World from section: %1$d</string>
 </resources>

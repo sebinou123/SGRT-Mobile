@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\build\\intermediates\\res\\merged\\debug\\values\\values.xml",
+        "outputFile": "C:\\Program Files\\SGRT\\lDAPSync\\build\\intermediates\\res\\merged\\debug\\values\\values.xml",
         "map": [
             {
                 "to": {
@@ -12,7 +12,7 @@
                     "endOffset": 205
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\arrays.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\arrays.xml",
                     "position": {
                         "startLine": 18,
                         "startColumn": 1,
@@ -32,7 +32,7 @@
                     "endOffset": 252
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 19,
                         "startColumn": 1,
@@ -51,7 +51,7 @@
                     "endOffset": 291
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 18,
                         "startColumn": 1,
@@ -70,7 +70,7 @@
                     "endOffset": 354
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 29,
                         "startColumn": 1,
@@ -89,7 +89,7 @@
                     "endOffset": 424
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 35,
                         "startColumn": 1,
@@ -108,7 +108,7 @@
                     "endOffset": 483
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 40,
                         "startColumn": 1,
@@ -127,7 +127,7 @@
                     "endOffset": 548
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 43,
                         "startColumn": 1,
@@ -146,7 +146,7 @@
                     "endOffset": 608
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 45,
                         "startColumn": 1,
@@ -165,7 +165,7 @@
                     "endOffset": 679
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 25,
                         "startColumn": 1,
@@ -184,7 +184,7 @@
                     "endOffset": 770
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 26,
                         "startColumn": 1,
@@ -203,7 +203,7 @@
                     "endOffset": 840
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 32,
                         "startColumn": 1,
@@ -222,7 +222,7 @@
                     "endOffset": 910
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 36,
                         "startColumn": 1,
@@ -241,7 +241,7 @@
                     "endOffset": 969
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 23,
                         "startColumn": 1,
@@ -260,7 +260,7 @@
                     "endOffset": 1030
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 38,
                         "startColumn": 1,
@@ -279,7 +279,7 @@
                     "endOffset": 1098
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 33,
                         "startColumn": 1,
@@ -298,7 +298,7 @@
                     "endOffset": 1175
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 31,
                         "startColumn": 1,
@@ -318,7 +318,7 @@
                     "endOffset": 1316
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 48,
                         "startColumn": 1,
@@ -338,7 +338,7 @@
                     "endOffset": 1377
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 37,
                         "startColumn": 1,
@@ -357,7 +357,7 @@
                     "endOffset": 1437
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 44,
                         "startColumn": 1,
@@ -376,7 +376,7 @@
                     "endOffset": 1511
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 34,
                         "startColumn": 1,
@@ -395,7 +395,7 @@
                     "endOffset": 1611
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 28,
                         "startColumn": 1,
@@ -414,7 +414,7 @@
                     "endOffset": 1670
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 24,
                         "startColumn": 1,
@@ -433,7 +433,7 @@
                     "endOffset": 1746
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 30,
                         "startColumn": 1,
@@ -452,7 +452,7 @@
                     "endOffset": 1807
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 41,
                         "startColumn": 1,
@@ -471,7 +471,7 @@
                     "endOffset": 1870
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 39,
                         "startColumn": 1,
@@ -490,7 +490,7 @@
                     "endOffset": 1964
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 27,
                         "startColumn": 1,
@@ -509,7 +509,7 @@
                     "endOffset": 2026
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 42,
                         "startColumn": 1,
@@ -528,7 +528,7 @@
                     "endOffset": 2102
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 53,
                         "startColumn": 1,
@@ -547,7 +547,7 @@
                     "endOffset": 2169
                 },
                 "from": {
-                    "file": "C:\\Users\\1232161\\Documents\\SGRT-Mobile\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
+                    "file": "C:\\Program Files\\SGRT\\lDAPSync\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 56,
                         "startColumn": 1,

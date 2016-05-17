@@ -15,12 +15,17 @@ public class ParseJSONBillesOnly {
     //Parameter of the JSON file
     public static String[] no;
     public static String[] titre;
+    public static String[] profName;
+    public static String[] nbBille;
+
 
 
 
     //Column name of the JSON file
     public static final String KEY_NO_COURS = "cou_no";
     public static final String KEY_TITRE_COURS = "cou_titre";
+    public static final String KEY_PROF_NAME = "ens_alias";
+    public static final String KEY_NUMBER_BILLE = "nb_bille";
 
     //
     private String json;
@@ -50,6 +55,8 @@ public class ParseJSONBillesOnly {
 
             no = new String[jsonArray.length()];
             titre = new String[jsonArray.length()];
+            profName = new String[jsonArray.length()];
+            nbBille = new String[jsonArray.length()];
 
             for(int i=0;i<jsonArray.length();i++){
 
@@ -57,6 +64,8 @@ public class ParseJSONBillesOnly {
 
                 no[i] = e.getString(KEY_NO_COURS);
                 titre[i] = e.getString(KEY_TITRE_COURS);
+                profName[i] = e.getString(KEY_PROF_NAME);
+                nbBille[i] = e.getString(KEY_NUMBER_BILLE);
 
             }
 

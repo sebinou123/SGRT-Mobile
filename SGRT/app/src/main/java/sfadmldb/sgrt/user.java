@@ -8,7 +8,7 @@ package sfadmldb.sgrt;
  */
 public class user {
 
-    private int id;
+    private String id;
     private String name;
     private String email;
     private String token;
@@ -36,7 +36,7 @@ public class user {
      *
      * @param id - Integer
      */
-    public void setId(int id)
+    public void setId(String id)
     {
         this.id = id;
     }
@@ -46,7 +46,7 @@ public class user {
      *
      * @return id - Integer
      */
-    public int getId()
+    public String getId()
     {
         return this.id;
     }
@@ -94,9 +94,9 @@ public class user {
     /**
      * Setter of the parameter email
      *
-     * @param email - String
+     * @param token - String
      */
-    public void setToken(String email)
+    public void setToken(String token)
     {
         this.token = token;
     }
@@ -110,4 +110,7 @@ public class user {
     {
         return this.token;
     }
+
+
+
 }

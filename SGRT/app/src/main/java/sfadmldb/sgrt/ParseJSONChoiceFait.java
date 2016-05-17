@@ -12,7 +12,7 @@ import org.json.JSONObject;
  */
 public class ParseJSONChoiceFait {
     //Parameter of the JSON file
-    public static String[] nbChoix;
+    public static Boolean[] nbChoix;
     public static String[] annee;
 
 
@@ -21,7 +21,7 @@ public class ParseJSONChoiceFait {
     public static final String KEY_ANNEE = "tac_annee";
 
     //
-    private String json;
+    private JSONObject json;
 
     public static int arrayLength;
 
@@ -30,7 +30,7 @@ public class ParseJSONChoiceFait {
      *
      * @param json - the string JSON
      */
-    public ParseJSONChoiceFait(String json){
+    public ParseJSONChoiceFait(JSONObject json){
 
         this.json = json;
     }
@@ -40,24 +40,18 @@ public class ParseJSONChoiceFait {
      */
     protected void parseJSON(){
 
-        JSONArray jsonArray=null;
+        nbChoix = new Boolean[1];
+        annee = new String[1];
+
+
+
         try {
-            jsonArray = new JSONArray(json);
-
-            arrayLength = jsonArray.length();
-
-            nbChoix = new String[jsonArray.length()];
-            annee = new String[jsonArray.length()];
 
 
-            for(int i=0;i<jsonArray.length();i++){
+            nbChoix[0] = json.getBoolean(KEY_NB_CHOIX);
+            annee[0] = json.getString(KEY_ANNEE);
 
-                JSONObject e = jsonArray.getJSONObject(i);
 
-                nbChoix[i] = e.getString(KEY_NB_CHOIX);
-                annee[i] = e.getString(KEY_ANNEE);
-
-            }
 
 
         } catch (JSONException e) {

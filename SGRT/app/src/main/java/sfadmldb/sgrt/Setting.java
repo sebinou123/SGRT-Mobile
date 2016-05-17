@@ -30,6 +30,8 @@ public class Setting extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(secure.checkRootMethod() == false)
+        {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
@@ -58,6 +60,7 @@ public class Setting extends AppCompatActivity {
         btnfr.setOnTouchListener(touchListener);
         btnen.setOnTouchListener(touchListener);
         btreturn.setOnTouchListener(touchListener);
+        }
     }
 
     /**

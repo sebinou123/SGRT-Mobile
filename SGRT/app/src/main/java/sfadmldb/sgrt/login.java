@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class login extends AppCompatActivity {
     //The logo of our project
     private ImageView logo;
 
+
     //Label for the username and the password
     private TextView errorUsername;
     private TextView errorPassword;
@@ -77,6 +79,8 @@ public class login extends AppCompatActivity {
     String username;
     String password;
 
+    ProgressBar progressBar;
+
 
 
     /**
@@ -88,6 +92,8 @@ public class login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        if(secure.checkRootMethod() == false)
+        {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -111,7 +117,7 @@ public class login extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         logo = (ImageView) findViewById(R.id.logoimg);
-        logo.setImageDrawable(getResources().getDrawable(R.drawable.logo));
+        logo.setImageDrawable(getResources().getDrawable(R.drawable.logotrans));
 
 
 
@@ -133,6 +139,9 @@ public class login extends AppCompatActivity {
         btnfr.setOnTouchListener(touchListener);
         btnen.setOnTouchListener(touchListener);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -215,7 +224,7 @@ public class login extends AppCompatActivity {
         {
             if(!password.matches(""))
             {
-                verifyConnection();
+                sendRequestPostConnection("login/authenticate");
             }
             else
             {
@@ -250,95 +259,65 @@ public class login extends AppCompatActivity {
      */
     private void sendRequestPostConnection(String path){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, consultPanel.url + path ,
-                new Response.Listener<String>() {
+        progressBar.setVisibility(View.VISIBLE);
 
-                    @Override
-                    public void onResponse(String response) {
-                        //ParseJSONLogin p = new ParseJSONLogin(response);
-                        //p.parseJSON();
-                        //user u = new user(p.token.####,p.token);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("username", username);
+        map.put("password", password);
+        map.put("web", "true");
 
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(login.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }){
+        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("user",username);
-                params.put("password", password);
+            public void onResponse(JSONObject result) {
 
-                return params;
+                progressBar.setVisibility(View.INVISIBLE);
+
+                 ParseJSONLogin pjl = new ParseJSONLogin(result);
+                 pjl.parseJSON();
+
+                 user.getUser().setToken(ParseJSONLogin.token[0]);
+                 user.getUser().setEmail(username);
+                 user.getUser().setName(ParseJSONLogin.userConnected[0]);
+                 user.getUser().setId(ParseJSONLogin.userId[0]);
+
+                 loadActivity();
+
             }
+        }, new Response.ErrorListener() {
 
-        };
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+                progressBar.setVisibility(View.INVISIBLE);
+                errorUsername.setText( getResources().getString(R.string.userExiste));
 
-    }
-
-    public void loginRequest(String path){
-
-        JSONObject login = new JSONObject();
-        JSONObject result = new JSONObject();
-
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, consultPanel.url + path ,
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(login.this, response, Toast.LENGTH_LONG).show();
-                        ParseJSONLogin pjl = new ParseJSONLogin(response);
-                        pjl.parseJSON();
-                        user.getUser().setToken(ParseJSONLogin.token[0]);
-                        user.getUser().setEmail(username);
-                        user.getUser().setName(ParseJSONLogin.userConnected[0]);
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(login.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }){
-
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("password", password);
-                return params;
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
             }
 
         };
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(stringRequest);
+        queue.add(sr);
+
     }
+
+
 
 
     /**
      *  This method instantiate the activity if the user is valid
      */
-    private void verifyConnection() {
+    private void loadActivity() {
 
-            //loginRequest("login/authenticate");
-
-            if(true)
-            {
                 Intent intent = new Intent(this, consultPanel.class);
                 startActivity(intent);
 
-            }
     }
 
     /**

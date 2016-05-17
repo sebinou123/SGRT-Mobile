@@ -8,13 +8,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -25,10 +29,19 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -62,8 +75,8 @@ public class consultPanel extends AppCompatActivity {
     String tab2name;
     String tab3name;
 
-    //String about the required number of choice
-    static final String NB_CHOICE_NEED = "5";
+
+
 
     //The selected item in the list ball or counter
     int currentListItemSelected;
@@ -75,17 +88,37 @@ public class consultPanel extends AppCompatActivity {
     //Array to put in listview
     private String[] arrayBille;
     private String[] arrayCompteur;
+    private String[] arrayNoCours = {"604","603","202", "123","607"};
+    private String[] arrayTitre = { "Programmation orienté objet I","Programmation orienté objet II","Programmation orienté objet III", "Programmation d\'interfacce","Sécurité" } ;
+    private String[] arrayPriority = { "1","2","3", "4","5" };
+    private String[] arrayNomProf = { "SF","ML","DB", "JF","AD", "DC" };
+    private String[] array1 = { "","3","0", "","1" };
+    private String[] array2 = { "1","","", "","5" };
+    private String[] array3 = { "1","0","", "3","3" };
+    private String[] array4 = { "","1","", "",""};
+    private String[] array5 = { "","","1", "","" };
+    private String[] array6 = { "0","","0", "3","5" };
+    private List<String[]> arrayDonnecompteur = new ArrayList();
+    private String[] array7 = { "6","0","0", "","0" };
+    private String[] array8 = { "0","10","1", "","0" };
+    private String[] array9 = { "0","0","23", "0","0" };
+    private String[] array10 = { "2","0","", "",""};
+    private String[] array11 = { "","","0", "","1" };
+    private String[] array12 = { "0","","0", "0","0" };
+    private List<String[]> arrayDonnebille = new ArrayList();
+
+    private ProgressBar progressbarChoix;
+
 
     //url to the server
-    //public static final String url = "http://api.geonames.org/earthquakesJSON?north=44.1&south=-9.9&east=-22.4&west=55.2&username=demo";
-    //public static final String url = "http://192.168.1.8/myhost-exemple/reponseChoix.php";
-    //public static final String url = "http://172.20.33.43:52567/SGRT/public/home";
-     public static final String url = "http://www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/";
+    public static final String url = "http://www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
 
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
 
 
-    /**
+
+
+    /*
      * Method called when the application start. This method set the view, instantiate every element and add them to the view. Also,
      * he set the current language to the application. Add event handler when a button is pressed.
      *
@@ -93,7 +126,8 @@ public class consultPanel extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        if(secure.checkRootMethod() == false)
+        {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consult_panel);
 
@@ -109,8 +143,8 @@ public class consultPanel extends AppCompatActivity {
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("SGRT");
 
+        toolbar.setTitle("SGRT");
         tblChoice = (TableLayout) findViewById(R.id.tblChoice);
         tblBilles = (TableLayout) findViewById(R.id.tblBilles);
         tblCompteur = (TableLayout) findViewById(R.id.tblCompteur);
@@ -121,6 +155,7 @@ public class consultPanel extends AppCompatActivity {
         tabHost = (TabHost)findViewById(R.id.tabHost);
         tabHost.setup();
         tabHost.setOnTabChangedListener(listener);
+
 
         tab1name = getResources().getString(R.string.tab1);
         tab2name = getResources().getString(R.string.tab2);
@@ -172,8 +207,15 @@ public class consultPanel extends AppCompatActivity {
         lstCompteur.setAdapter(myAdapterCompteur);
         lstCompteur.setOnItemClickListener(lstListener);
 
+        progressbarChoix = (ProgressBar) findViewById(R.id.progressBarChoix);
+        progressbarChoix.setVisibility(View.INVISIBLE);
 
-
+            TabWidget widget = tabHost.getTabWidget();
+            for(int i = 0; i < widget.getChildCount(); i++) {
+                View v = widget.getChildAt(i);
+                v.setBackgroundResource(R.drawable.apptheme_tab_indicator_holo);
+            }
+        }
     }
 
     /**
@@ -203,11 +245,13 @@ public class consultPanel extends AppCompatActivity {
                 if(itemValue.matches(getResources().getString(R.string.lstBille1)))
                 {
                     currentListItemSelected = 1;
+                    showJSON("");
                     //currentPath = "bille/########";
                     //sendRequestPostBilleOnly();
                 }else if(itemValue.matches(getResources().getString(R.string.lstBille2)))
                 {
                     currentListItemSelected = 2;
+                    showJSON("");
                     //currentPath = "bille#########";
                     //sendRequestPostBilleAndCompteur()
                 }else
@@ -223,11 +267,13 @@ public class consultPanel extends AppCompatActivity {
                 if(itemValue.matches(getResources().getString(R.string.lstCompteur1)))
                 {
                     currentListItemSelected = 1;
+                    showJSON("");
                     //currentPath = "compteur/########";
                     //sendRequestPostCompteurOnly();
                 }else if(itemValue.matches(getResources().getString(R.string.lstCompteur2)))
                 {
                     currentListItemSelected = 2;
+                    showJSON("");
                     //currentPath = "compteur/########";
                     //sendRequestPostCompteurAndBille()
                 }else
@@ -256,17 +302,21 @@ public class consultPanel extends AppCompatActivity {
 
             if(tabId.matches(tab1name))
             {
+                tblBilles.removeAllViews();
                 currentTab = "1";
 
             }
             else if(tabId.matches(tab2name))
             {
+                tblChoice.removeAllViews();
                currentTab = "2";
                currentPath = "choix/choixStatus";
                sendRequestPostChoix(currentPath);
+
             }
             else
             {
+                tblCompteur.removeAllViews();
                 currentTab = "3";
 
             }
@@ -274,64 +324,68 @@ public class consultPanel extends AppCompatActivity {
     }
 
 
+
+
     /**
-     * Method who send a request to get a response about if the user have made his choice.
-     * Return an error if the request fail or he didn't made his choice
-     * Call an other request if valid
+     * Method to send request to the web server to get response about if the user is valid and exist in the LDAP directory
+     * Create an object user with his information (id, name, email) if it's correct and the consult panel is instantiate.
+     * Show an error if the user is not in the database
      *
      * @param path - the path on the server
      */
     private void sendRequestPostChoix(String path){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
-                new Response.Listener<String>() {
+        progressbarChoix.setVisibility(View.VISIBLE);
 
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(consultPanel.this, response, Toast.LENGTH_LONG).show();
-                        /**
-                        ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(response);
-                        pjcf.parseJSON();
-                        if(ParseJSONChoiceFait.nbChoix[0].matches(consultPanel.NB_CHOICE_NEED))
-                        {
-                            currentPath = "choix/getChoix";
-                            sendRequestPostChoixValide(currentPath);
-                        }
-                        else
-                        {
-                            TextView txtTemp = new TextView(tblChoice.getContext());
-                            txtTemp.setText(getResources().getString(R.string.errorChoice));
-                            tblChoice.addView(txtTemp);
-                        }*/
-                    }
-                },
-                new Response.ErrorListener() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("user_id", user.getUser().getId());
+        map.put("web", "true");
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(consultPanel.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }){
+        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("ensId","1");
+            public void onResponse(JSONObject result) {
 
-                return params;
+                progressbarChoix.setVisibility(View.INVISIBLE);
+
+                    ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(result);
+                    pjcf.parseJSON();
+                    if(ParseJSONChoiceFait.nbChoix[0])
+                    {
+                        currentPath = "choix/getChoix";
+                        sendRequestPostChoixValide(currentPath);
+                    }
+                    else
+                    {
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.errorChoice));
+                        tblChoice.addView(txtTemp);
+                    }
+
             }
+        }, new Response.ErrorListener() {
 
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(consultPanel.this, error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }){
+            @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("authorization", "Bearer " + user.getUser().getToken());
-                return params;
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("authorization", "Bearer " +  user.getUser().getToken());
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
             }
 
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(sr);
 
     }
+
 
     /**
      * Method who send a request to get for a teacher all of his choice.
@@ -347,6 +401,7 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
+                        progressbarChoix.setVisibility(View.INVISIBLE);
                         showJSON(response);
                     }
                 },
@@ -354,18 +409,21 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(consultPanel.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        progressbarChoix.setVisibility(View.INVISIBLE);
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                        tblChoice.addView(txtTemp);
                     }
                 }){
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("ensId","1");
+                params.put("user_id",user.getUser().getId());
                 return params;
             }
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("authorization", "Bearer " + user.getUser().getToken());
+                params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
 
@@ -384,7 +442,36 @@ public class consultPanel extends AppCompatActivity {
      * @param path - the path on the server
      */
     private void sendRequestPostCompteurOnly(String path){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
+                new Response.Listener<String>() {
 
+                    @Override
+                    public void onResponse(String response) {
+                         showJSON(response);
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressbarChoix.setVisibility(View.INVISIBLE);
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                        tblCompteur.addView(txtTemp);
+                    }
+                }){
+
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " +  user.getUser().getToken());
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
     /**
@@ -395,7 +482,36 @@ public class consultPanel extends AppCompatActivity {
      * @param path - the path on the server
      */
     private void sendRequestPostBilleOnly(String path){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
+                new Response.Listener<String>() {
 
+                    @Override
+                    public void onResponse(String response) {
+                        showJSON(response);
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressbarChoix.setVisibility(View.INVISIBLE);
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                        tblBilles.addView(txtTemp);
+                    }
+                }){
+
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " +  user.getUser().getToken());
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
     /**
@@ -406,7 +522,36 @@ public class consultPanel extends AppCompatActivity {
      * @param path - the path on the server
      */
     private void sendRequestPostBilleAndCompteur(String path){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
+                new Response.Listener<String>() {
 
+                    @Override
+                    public void onResponse(String response) {
+                        showJSON(response);
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressbarChoix.setVisibility(View.INVISIBLE);
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                        tblBilles.addView(txtTemp);
+                    }
+                }){
+
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " +  user.getUser().getToken());
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
     /**
@@ -417,7 +562,36 @@ public class consultPanel extends AppCompatActivity {
      * @param path - the path on the server
      */
     private void sendRequestPostCompteurAndBille(String path){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
+                new Response.Listener<String>() {
 
+                    @Override
+                    public void onResponse(String response) {
+                        showJSON(response);
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressbarChoix.setVisibility(View.INVISIBLE);
+                        TextView txtTemp = new TextView(tblChoice.getContext());
+                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                        tblCompteur.addView(txtTemp);
+                    }
+                }){
+
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", "Bearer " +  user.getUser().getToken());
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
     /**
@@ -428,15 +602,216 @@ public class consultPanel extends AppCompatActivity {
     private void showJSON(String json){
 
         if(currentTab.matches("1")) {
+            tblBilles.removeAllViews();
             if(currentListItemSelected == 1)
             {
-                ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
-                pjb.parseJSON();
+                tblBilles.removeAllViews();
+               /** ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
+                pjb.parseJSON();*/
+
+                TableRow row;
+                TextView txtno;
+                TextView txtvide;
+                TextView txttitre;
+                TextView nomProf;
+                TextView donnee;
+                arrayDonnecompteur.add(array1);
+                arrayDonnecompteur.add(array2);
+                arrayDonnecompteur.add(array3);
+                arrayDonnecompteur.add(array4);
+                arrayDonnecompteur.add(array5);
+                arrayDonnecompteur.add(array6);
+
+
+                row = new TableRow(tblBilles.getContext());
+
+                txtvide = new TextView(tblBilles.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    txtno = new TextView(tblBilles.getContext());
+
+                    txtno.setText(arrayNoCours[i]);
+                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txtno.setPadding(50,50,50,50);
+                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txtno);
+                }
+
+                tblBilles.addView(row);
+
+                row = new TableRow(tblBilles.getContext());
+
+                txtvide = new TextView(tblBilles.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayTitre.length; i++) {
+
+                    txttitre = new TextView(tblBilles.getContext());
+
+                    txttitre.setText(arrayTitre[i]);
+                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txttitre.setPadding(50,50,50,50);
+                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txttitre);
+                }
+
+                tblBilles.addView(row);
+
+                for (int i = 0; i < 6; i++) {
+                    row = new TableRow(tblBilles.getContext());
+                    nomProf = new TextView(tblBilles.getContext());
+                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    nomProf.setPadding(50,50,50,50);
+                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    row.addView(nomProf);
+                    for (int j = 0; j < 5; j++) {
+
+                        donnee = new TextView(tblBilles.getContext());
+                        donnee.setText(arrayDonnecompteur.get(i)[j]);
+                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        donnee.setPadding(50,50,50,50);
+                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        row.addView(donnee);
+                    }
+                    tblBilles.addView(row);;
+                }
             }
             else if(currentListItemSelected == 2)
             {
-                ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
-                pjbac.parseJSON();
+                tblBilles.removeAllViews();
+               /** ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
+                pjbac.parseJSON();*/
+                TableRow row;
+                TextView txtno;
+                TextView txtvide;
+                TextView txttitre;
+                TextView nomProf;
+                TextView donnee;
+                TextView lblBandC;
+                arrayDonnecompteur.add(array1);
+                arrayDonnecompteur.add(array2);
+                arrayDonnecompteur.add(array3);
+                arrayDonnecompteur.add(array4);
+                arrayDonnecompteur.add(array5);
+                arrayDonnecompteur.add(array6);
+                arrayDonnebille.add(array7);
+                arrayDonnebille.add(array8);
+                arrayDonnebille.add(array9);
+                arrayDonnebille.add(array10);
+                arrayDonnebille.add(array11);
+                arrayDonnebille.add(array12);
+
+
+                row = new TableRow(tblBilles.getContext());
+
+                txtvide = new TextView(tblBilles.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    txtno = new TextView(tblBilles.getContext());
+
+                    txtno.setText(arrayNoCours[i]);
+                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txtno.setPadding(50,50,50,50);
+                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txtno);
+                }
+
+                tblBilles.addView(row);
+
+                row = new TableRow(tblBilles.getContext());
+
+                txtvide = new TextView(tblBilles.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayTitre.length; i++) {
+
+                    txttitre = new TextView(tblBilles.getContext());
+
+                    txttitre.setText(arrayTitre[i]);
+                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txttitre.setPadding(50,50,50,50);
+                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txttitre);
+                }
+
+                tblBilles.addView(row);
+
+                row = new TableRow(tblBilles.getContext());
+
+                txtvide = new TextView(tblBilles.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    lblBandC = new TextView(tblBilles.getContext());
+
+                    lblBandC.setText(getResources().getString(R.string.lblBandC));
+                    lblBandC.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    lblBandC.setPadding(50,50,50,50);
+                    lblBandC.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(lblBandC);
+                }
+
+                tblBilles.addView(row);
+
+                for (int i = 0; i < 6; i++) {
+                    row = new TableRow(tblBilles.getContext());
+                    nomProf = new TextView(tblBilles.getContext());
+                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    nomProf.setPadding(50,50,50,50);
+                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    row.addView(nomProf);
+                    for (int j = 0; j < 5; j++) {
+
+                        donnee = new TextView(tblBilles.getContext());
+                        donnee.setText(arrayDonnebille.get(i)[j] + " / " + arrayDonnecompteur.get(i)[j]);
+                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        donnee.setPadding(50,50,50,50);
+                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        row.addView(donnee);
+                    }
+                    tblBilles.addView(row);;
+                }
             }else{}
         }
         else if(currentTab.matches("2"))
@@ -445,6 +820,7 @@ public class consultPanel extends AppCompatActivity {
 
             ParseJSONChoice pjc = new ParseJSONChoice(json);
             pjc.parseJSON();
+
             TableRow row;
             TextView txtno;
             TextView txttitre;
@@ -452,6 +828,14 @@ public class consultPanel extends AppCompatActivity {
             TextView nolbl;
             TextView titrelbl;
             TextView prioritylbl;
+            TextView anneeChoix;
+
+            anneeChoix = new TextView(tblChoice.getContext());
+            anneeChoix.setTextAppearance(this,R.style.CustomTitleText);
+            anneeChoix.setText(getResources().getString(R.string.choiceTitle)+ " " + ParseJSONChoiceFait.annee[0]);
+            anneeChoix.setPadding(0,50,0,50);
+            anneeChoix.setGravity(Gravity.CENTER_HORIZONTAL);
+            tblChoice.addView(anneeChoix);
 
             row = new TableRow(tblChoice.getContext());
             nolbl = new TextView(tblChoice.getContext());
@@ -503,17 +887,225 @@ public class consultPanel extends AppCompatActivity {
                 row.addView(txtpriority);
                 tblChoice.addView(row);
             }
+
+
+
+
+
         }else if(currentTab.matches("3"))
         {
+            tblCompteur.removeAllViews();
+
             if(currentListItemSelected == 1)
             {
-                ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
-                pjc.parseJSON();
+                tblCompteur.removeAllViews();
+               /** ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
+                pjc.parseJSON();*/
+
+                TableRow row;
+                TextView txtno;
+                TextView txtvide;
+                TextView txttitre;
+                TextView nomProf;
+                TextView donnee;
+                arrayDonnecompteur.add(array1);
+                arrayDonnecompteur.add(array2);
+                arrayDonnecompteur.add(array3);
+                arrayDonnecompteur.add(array4);
+                arrayDonnecompteur.add(array5);
+                arrayDonnecompteur.add(array6);
+
+
+                row = new TableRow(tblChoice.getContext());
+
+                txtvide = new TextView(tblChoice.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    txtno = new TextView(tblChoice.getContext());
+
+                    txtno.setText(arrayNoCours[i]);
+                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txtno.setPadding(50,50,50,50);
+                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txtno);
+                }
+
+                tblCompteur.addView(row);
+
+                row = new TableRow(tblChoice.getContext());
+
+                txtvide = new TextView(tblChoice.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayTitre.length; i++) {
+
+                    txttitre = new TextView(tblChoice.getContext());
+
+                    txttitre.setText(arrayTitre[i]);
+                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txttitre.setPadding(50,50,50,50);
+                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txttitre);
+                }
+
+                tblCompteur.addView(row);
+
+                for (int i = 0; i < 6; i++) {
+                    row = new TableRow(tblCompteur.getContext());
+                    nomProf = new TextView(tblCompteur.getContext());
+                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    nomProf.setPadding(50,50,50,50);
+                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    row.addView(nomProf);
+                    for (int j = 0; j < 5; j++) {
+
+                        donnee = new TextView(tblCompteur.getContext());
+                        donnee.setText(arrayDonnecompteur.get(i)[j]);
+                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        donnee.setPadding(50,50,50,50);
+                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        row.addView(donnee);
+                    }
+                    tblCompteur.addView(row);;
+                }
             }
             else if(currentListItemSelected == 2)
             {
-                ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
-                pjcab.parseJSON();
+                tblCompteur.removeAllViews();
+               /** ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
+                pjcab.parseJSON();*/
+
+                TableRow row;
+                TextView txtno;
+                TextView txtvide;
+                TextView txttitre;
+                TextView nomProf;
+                TextView donnee;
+                TextView lblCandB;
+                arrayDonnecompteur.add(array1);
+                arrayDonnecompteur.add(array2);
+                arrayDonnecompteur.add(array3);
+                arrayDonnecompteur.add(array4);
+                arrayDonnecompteur.add(array5);
+                arrayDonnecompteur.add(array6);
+                arrayDonnebille.add(array7);
+                arrayDonnebille.add(array8);
+                arrayDonnebille.add(array9);
+                arrayDonnebille.add(array10);
+                arrayDonnebille.add(array11);
+                arrayDonnebille.add(array12);
+
+
+                row = new TableRow(tblChoice.getContext());
+
+                txtvide = new TextView(tblChoice.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    txtno = new TextView(tblCompteur.getContext());
+
+                    txtno.setText(arrayNoCours[i]);
+                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txtno.setPadding(50,50,50,50);
+                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txtno);
+                }
+
+                tblCompteur.addView(row);
+
+                row = new TableRow(tblCompteur.getContext());
+
+                txtvide = new TextView(tblCompteur.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayTitre.length; i++) {
+
+                    txttitre = new TextView(tblCompteur.getContext());
+
+                    txttitre.setText(arrayTitre[i]);
+                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    txttitre.setPadding(50,50,50,50);
+                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(txttitre);
+                }
+
+                tblCompteur.addView(row);
+
+                row = new TableRow(tblCompteur.getContext());
+
+                txtvide = new TextView(tblCompteur.getContext());
+                txtvide.setText("");
+                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                txtvide.setPadding(50,50,50,50);
+                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                row.addView(txtvide);
+
+                for (int i = 0; i < arrayNoCours.length; i++) {
+
+                    lblCandB = new TextView(tblCompteur.getContext());
+
+                    lblCandB.setText(getResources().getString(R.string.lblCandB));
+                    lblCandB.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    lblCandB.setPadding(50,50,50,50);
+                    lblCandB.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                    row.addView(lblCandB);
+                }
+
+                tblCompteur.addView(row);
+
+                for (int i = 0; i < 6; i++) {
+                    row = new TableRow(tblCompteur.getContext());
+                    nomProf = new TextView(tblCompteur.getContext());
+                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    nomProf.setPadding(50,50,50,50);
+                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    row.addView(nomProf);
+                    for (int j = 0; j < 5; j++) {
+
+                        donnee = new TextView(tblCompteur.getContext());
+                        donnee.setText(arrayDonnecompteur.get(i)[j] + " / " + arrayDonnebille.get(i)[j] );
+                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        donnee.setPadding(50,50,50,50);
+                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        row.addView(donnee);
+                    }
+                    tblCompteur.addView(row);;
+                }
             }else{}
 
         }
@@ -530,7 +1122,7 @@ public class consultPanel extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -552,6 +1144,8 @@ public class consultPanel extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, Setting.class);
             startActivityForResult(intent, PICK_CONTACT_REQUEST);
+        } else if (id == R.id.action_logout) {
+            this.finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -584,4 +1178,22 @@ public class consultPanel extends AppCompatActivity {
         recreate();
     }
 
+    /**
+     * Called when a key down event has occurred. He don't come back to the previous activity because of the login implementation ( the user
+     * need to logout to come back )
+     *
+     * @param keyCode -  The value in event.getKeyCode().
+     * @param event -   Description of the key event.
+     *
+     * @return boolean - true on Keydown pressed
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+
+        if(keyCode==KeyEvent.KEYCODE_BACK)
+        {
+        }
+
+        return true;
+    }
 }

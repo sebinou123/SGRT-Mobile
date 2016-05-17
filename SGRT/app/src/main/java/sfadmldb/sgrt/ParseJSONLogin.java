@@ -15,24 +15,26 @@ public class ParseJSONLogin {
     //Parameter of the JSON file
     public static String[] token;
     public static String[] userConnected;
+    public static String[] userId;
 
     //Column name of the JSON file
     public static final String KEY_TOKEN = "jwt";
     public static final String KEY_USER = "connected_user";
+    public static final String KEY_USER_ID = "user_id";
 
 
 
     //
-    private String json;
+    private JSONObject json;
 
-    public static int arrayLength;
+
 
     /**
      * Constructor of the JSON class
      *
      * @param json - the string JSON
      */
-    public ParseJSONLogin(String json){
+    public ParseJSONLogin(JSONObject json){
 
         this.json = json;
     }
@@ -43,28 +45,24 @@ public class ParseJSONLogin {
     protected void parseJSON(){
 
 
-        JSONArray jsonArray=null;
-        try {
-            jsonArray = new JSONArray(json);
-
-            arrayLength = jsonArray.length();
-
-            token = new String[jsonArray.length()];
-            userConnected = new String[jsonArray.length()];
 
 
-            for(int i=0;i<jsonArray.length();i++){
+            token = new String[1];
+            userConnected = new String[1];
+            userId = new String[1];
 
-                JSONObject e = jsonArray.getJSONObject(i);
 
-                token[i] = e.getString(KEY_TOKEN);
-                userConnected[i] = e.getString(KEY_USER);
+            try {
 
+
+                token[0] = json.getString(KEY_TOKEN);
+                userConnected[0] = json.getString(KEY_USER);
+                userId[0] = json.getString(KEY_USER_ID);
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 }
