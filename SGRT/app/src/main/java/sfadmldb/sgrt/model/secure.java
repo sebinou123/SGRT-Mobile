@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 /**
  * Class who give method to make validation to secure the application.

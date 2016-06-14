@@ -21,14 +21,23 @@
     <string name="errorChoice">Vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT.com pour faire vos choix.</string>
     <string name="lstBille1">Billes seulement</string>
     <string name="lstBille2">Billes avec compteur</string>
+    <string name="lstBille2alt">Billes avec compteur et Bid</string>
     <string name="lstCompteur1">Compteurs seulement</string>
     <string name="lstCompteur2">Compteurs avec billes</string>
+    <string name="lstCompteur2alt">Compteurs avec billes et Bid</string>
     <string name="lblBandC">Billes / Compteurs</string>
+    <string name="lblBandCandBid">Billes / Compteurs / Bid</string>
     <string name="lblCandB">Compteurs / Billes</string>
+    <string name="lblCandBandBid">Compteurs / Billes / Bid</string>
     <string name="userExiste">Le nom d\'utilisateur \\ mot de passe est incorrect</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="choiceTitle">Voici vos choix pour la tâche de</string>
     <string name="lblLogout">Déconnexion</string>
     <string name="lblerrorWebService">Erreur lors du chargement des données</string>
+    <string name="listSpinner1">Choisissez une session</string>
+    <string name="listSpinner2">A</string>
+    <string name="listSpinner3">H</string>
+    <string name="listSpinner4">E</string>
+    <string name="lblSpinnerTitle">Session</string>
     <string name="section_format">Hello World from section: %1$d</string>
 </resources>

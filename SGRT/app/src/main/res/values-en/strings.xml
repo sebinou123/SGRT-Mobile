@@ -21,14 +21,23 @@
     <string name="errorChoice">You did not made your choice of task for the current year, please go to SGRT.com to make your choice.</string>
     <string name="lstBille1">Marbles only</string>
     <string name="lstBille2">Marbles with counter</string>
+    <string name="lstBille2alt">Marbles with counter and Bid</string>
     <string name="lstCompteur1">Counter only</string>
     <string name="lstCompteur2">Counter with ball</string>
+    <string name="lstCompteur2alt">Counter with ball and Bid</string>
     <string name="lblBandC">Marbles / Counter</string>
+    <string name="lblBandCandBid">Marbles / Counter / Bid</string>
     <string name="lblCandB">Counter / Marbles</string>
+    <string name="lblCandBandBid">Counter / Marbles / Bid</string>
     <string name="userExiste">Invalid username \\ password</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="lblLogout">Logout</string>
     <string name="lblerrorWebService">Error while loading data</string>
     <string name="choiceTitle">Courses choice for the task of</string>
+    <string name="listSpinner1">Choisissez une session</string>
+    <string name="listSpinner2">A</string>
+    <string name="listSpinner3">H</string>
+    <string name="listSpinner4">E</string>
+    <string name="lblSpinnerTitle">Session</string>
     <string name="section_format">Hello World from section: %1$d</string>
 </resources>

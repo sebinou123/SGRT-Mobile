@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.Locale;
+
+import sfadmldb.sgrt.R;
 
 /**
  *  This class manage the prefered language, the user select a language and return to the previous activity

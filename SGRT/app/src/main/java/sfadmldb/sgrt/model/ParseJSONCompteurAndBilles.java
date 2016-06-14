@@ -1,8 +1,5 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
-import android.widget.Toast;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,32 +8,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- *	This class parse the JSON file from the web service for the counter tab
+ *	This class parse the JSON file from the web service
  *
  *  @author Sébastien Fillion
  *  @version 1.0
  */
 public class ParseJSONCompteurAndBilles {
 
-    public static HashMap<String, String> getLstCours() {
-        return lstCours;
-    }
-
-    public static ArrayList<String> getProfInitial() {
-        return profInitial;
-    }
-
-    public static ArrayList<Prof> getLstProf() {
-        return lstProf;
-    }
-
     //Parameter of the JSON file
     public static HashMap<String,String> lstCours;
     public static ArrayList<String> profInitial;
     public static ArrayList<Prof> lstProf;
-
-    public int pointeur;
-
 
     //Column name of the JSON file
     public static final String KEY_COURS = "cours";
@@ -45,9 +27,11 @@ public class ParseJSONCompteurAndBilles {
     public static final String KEY_BID = "bid";
     public static final String KEY_VIDE = "";
 
-    //
+    //String json push by the web service
     private String json;
 
+    //Boolean to know if we want to show the bid for each courses
+    public static boolean afficherBid = false;
 
     /**
      * Constructor of the JSON class
@@ -62,9 +46,7 @@ public class ParseJSONCompteurAndBilles {
     /**
      *	This method extract from the JSON object the information and put them in is associate array
      */
-    protected void parseJSON(){
-
-        pointeur = 0;
+    public void parseJSON(){
 
         JSONObject objtemp1;
         JSONObject objtemp2;
@@ -79,19 +61,20 @@ public class ParseJSONCompteurAndBilles {
         String nomCours;
 
         try {
-            ArrayList<Cours> lstCoursTemp = new ArrayList<>();
+            ArrayList<Cours> lstCoursTemp;
             lstCours = new HashMap<>();
             lstProf = new ArrayList<>();
             profInitial = new ArrayList<>();
             JSONObject issueObj = new JSONObject(json);
             Iterator iterator = issueObj.keys();
+            afficherBid = false;
+
             while(iterator.hasNext()){
-                lstCoursTemp.clear();
+                lstCoursTemp = new ArrayList<>();
                 initProf = (String)iterator.next();
                 if(!initProf.matches(KEY_VIDE))
                 {
                     profInitial.add(initProf);
-                    pointeur++;
                     objtemp1 = issueObj.getJSONObject(initProf);
                     objtemp2 = objtemp1.getJSONObject(KEY_COURS);
                     Iterator iterator2 = objtemp2.keys();
@@ -103,10 +86,20 @@ public class ParseJSONCompteurAndBilles {
                             nomCours =  objtemp3.getString(KEY_COURS);
                             billes =  objtemp3.getInt(KEY_BILLES);
                             compteurs =  objtemp3.getInt(KEY_COMPTEUR);
-                            bid =  objtemp3.getInt(KEY_BID);
+                            bid = 0;
 
-                            if(!lstCours.containsKey(noCours))
+                            if(objtemp3.length() == 4)
                             {
+                                 afficherBid = true;
+                                 bid = objtemp3.getInt(KEY_BID);
+                            }
+
+                            if(!lstCours.isEmpty()){
+                                if(!lstCours.containsKey(noCours))
+                                {
+                                    lstCours.put(noCours, nomCours);
+                                }
+                            }else{
                                 lstCours.put(noCours, nomCours);
                             }
 
@@ -124,6 +117,14 @@ public class ParseJSONCompteurAndBilles {
         }
     }
 
+    /**
+     * Method who verified if a teacher have information on courses (marbles, counter, bid) by comparing
+     * this teacher with the array of teacher who have information on courses.
+     *
+     * @param alias - teacher alias
+     *
+     * @return Boolean - true if a teacher have courses or not
+     */
     public static Boolean getProfHaveCours(String alias)
     {
         Boolean existe = false;
@@ -140,6 +141,13 @@ public class ParseJSONCompteurAndBilles {
         return existe;
     }
 
+    /**
+     * Find if the alias who represent the user exit in the array of all users.
+     *
+     * @param alias - User alias
+     *
+     * @return Prof - if it existe or null
+     */
     public static Prof getProf(String alias)
     {
         Prof profTemp = null;

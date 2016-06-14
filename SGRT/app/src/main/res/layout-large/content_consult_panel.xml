@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="sfadmldb.sgrt.consultPanel"
+    tools:context=".view.consultPanel"
     tools:showIn="@layout/activity_consult_panel">
 
     <TabHost
@@ -45,6 +45,20 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/listBille" />
 
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progressBarBilles"
+                        android:gravity="center"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/errorLoadDonneesBilles" />
+
                     <ScrollView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -73,6 +87,18 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomTextLanguage"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/spinnerTitle" />
+
+                    <Spinner
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerSession" />
+
                     <ProgressBar
                         style="?android:attr/progressBarStyleSmall"
                         android:layout_width="wrap_content"
@@ -80,6 +106,12 @@
                         android:id="@+id/progressBarChoix"
                         android:gravity="center"
                         android:layout_gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/errorLoadDonnees" />
 
                     <ScrollView
                         android:layout_width="wrap_content"
@@ -111,6 +143,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/listCompteur" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progressBarCompteur"
+                        android:gravity="center"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/errorLoadDonneesCompteur" />
 
                     <ScrollView
                         android:layout_width="wrap_content"

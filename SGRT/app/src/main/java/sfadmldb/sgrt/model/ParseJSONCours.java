@@ -1,11 +1,14 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Sebastien on 2016-06-01.
+ *	This class parse the JSON file about course
+ *
+ *  @author Sébastien Fillion
+ *  @version 1.0
  */
 public class ParseJSONCours {
     //Parameter of the JSON file
@@ -16,9 +19,10 @@ public class ParseJSONCours {
     public static final String KEY_NO_COURS = "cou_no";
     public static final String KEY_TITRE_COURS = "cou_titre";
 
-    //
+    //String json push by the web service
     private String json;
 
+    //json length
     public static int arrayLength;
 
     /**
@@ -34,7 +38,7 @@ public class ParseJSONCours {
     /**
      *	This method extract from the JSON object the information and put them in is associate array
      */
-    protected void parseJSON(){
+    public void parseJSON(){
 
         JSONArray jsonArray;
         try {

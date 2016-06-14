@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,11 +18,12 @@ public class ParseJSONChoiceFait {
     //Column name of the JSON file
     public static final String KEY_NB_CHOIX = "choixFait";
     public static final String KEY_ANNEE = "tac_annee";
+    public static final String KEY_SESSION_AUTOMNE = "A";
+    public static final String KEY_SESSION_HIVER = "H";
+    public static final String KEY_SESSION_ETE = "E";
 
-    //
+    //String json push by the web service
     private JSONObject json;
-
-    public static int arrayLength;
 
     /**
      * Constructor of the JSON class
@@ -37,7 +38,7 @@ public class ParseJSONChoiceFait {
     /**
      *	This method extract from the JSON object the information and put them in is associate array
      */
-    protected void parseJSON(){
+    public void parseJSON(){
 
         nbChoix = new Boolean[1];
         annee = new String[1];
@@ -45,9 +46,10 @@ public class ParseJSONChoiceFait {
 
 
         try {
-
-
-            nbChoix[0] = json.getBoolean(KEY_NB_CHOIX);
+            JSONObject objectTemp = json.getJSONObject(KEY_NB_CHOIX);
+            nbChoix[0] = objectTemp.getBoolean(KEY_SESSION_AUTOMNE);
+            nbChoix[1] = objectTemp.getBoolean(KEY_SESSION_HIVER);
+            nbChoix[2] = objectTemp.getBoolean(KEY_SESSION_ETE);
             annee[0] = json.getString(KEY_ANNEE);
 
 

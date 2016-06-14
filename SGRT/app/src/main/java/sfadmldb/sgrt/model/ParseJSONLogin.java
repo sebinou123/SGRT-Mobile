@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,12 +21,8 @@ public class ParseJSONLogin {
     public static final String KEY_USER = "connected_user";
     public static final String KEY_USER_ID = "user_id";
 
-
-
-    //
+    //String json push by the web service
     private JSONObject json;
-
-
 
     /**
      * Constructor of the JSON class
@@ -41,24 +37,17 @@ public class ParseJSONLogin {
     /**
      *	This method extract from the JSON object the information and put them in is associate array
      */
-    protected void parseJSON(){
-
-
-
+    public void parseJSON(){
 
             token = new String[1];
             userConnected = new String[1];
             userId = new String[1];
 
-
             try {
-
 
                 token[0] = json.getString(KEY_TOKEN);
                 userConnected[0] = json.getString(KEY_USER);
                 userId[0] = json.getString(KEY_USER_ID);
-
-
 
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -6,13 +6,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:debuggable="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".login"
+            android:name=".view.login"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -22,15 +23,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".consultPanel"
+            android:name=".view.consultPanel"
             android:label="@string/title_activity_consult_panel"
-            android:parentActivityName=".login"
+            android:parentActivityName=".view.login"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="sfadmldb.sgrt.login" />
+                android:value=".view.login" />
         </activity>
-        <activity android:name=".Setting"></activity>
+        <activity android:name=".model.Setting"></activity>
     </application>
 
 </manifest>

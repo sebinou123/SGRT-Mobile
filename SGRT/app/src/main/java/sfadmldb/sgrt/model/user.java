@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 /**
  *	This class stock all the information about the user (except his password).
@@ -21,7 +21,9 @@ public class user {
     private user(){}
 
 
-
+    /**
+     *	Constructor of user class who implement the singleton pattern
+     */
     public static user getUser()
     {
         if (INSTANCE == null)

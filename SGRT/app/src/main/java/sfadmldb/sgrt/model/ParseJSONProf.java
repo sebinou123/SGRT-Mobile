@@ -1,4 +1,4 @@
-package sfadmldb.sgrt;
+package sfadmldb.sgrt.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,7 +7,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Sebastien on 2016-06-01.
+ *	This class parse the JSON file about Professor
+ *
+ *  @author Sébastien Fillion
+ *  @version 1.0
  */
 public class ParseJSONProf {
     //Parameter of the JSON file
@@ -34,7 +37,7 @@ public class ParseJSONProf {
     /**
      *	This method extract from the JSON object the information and put them in is associate array
      */
-    protected void parseJSON(){
+    public void parseJSON(){
 
         JSONArray jsonArray;
         try {
@@ -42,7 +45,7 @@ public class ParseJSONProf {
 
             arrayLength = jsonArray.length();
 
-            allAlias = new ArrayList<String>(json.length());
+            allAlias = new ArrayList<>(json.length());
 
             for(int i=0;i<jsonArray.length();i++){
 
