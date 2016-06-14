@@ -1,8 +1,14 @@
 package sfadmldb.sgrt;
 
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *	This class parse the JSON file from the web service for the counter tab
@@ -12,27 +18,36 @@ import org.json.JSONObject;
  */
 public class ParseJSONCompteurAndBilles {
 
-    //Parameter of the JSON file
-    public static String[] no;
-    public static String[] titre;
-    public static String[] profName;
-    public static String[] nbBille;
-    public static String[] nbCompteur;
+    public static HashMap<String, String> getLstCours() {
+        return lstCours;
+    }
 
+    public static ArrayList<String> getProfInitial() {
+        return profInitial;
+    }
+
+    public static ArrayList<Prof> getLstProf() {
+        return lstProf;
+    }
+
+    //Parameter of the JSON file
+    public static HashMap<String,String> lstCours;
+    public static ArrayList<String> profInitial;
+    public static ArrayList<Prof> lstProf;
+
+    public int pointeur;
 
 
     //Column name of the JSON file
-    public static final String KEY_NO_COURS = "cou_no";
-    public static final String KEY_TITRE_COURS = "cou_titre";
-    public static final String KEY_PROF_NAME = "ens_alias";
-    public static final String KEY_NUMBER_BILLE = "nb_bille";
-    public static final String KEY_NUMBER_COMPTER = "nb_cpt";
-
+    public static final String KEY_COURS = "cours";
+    public static final String KEY_BILLES = "billes";
+    public static final String KEY_COMPTEUR = "compteur";
+    public static final String KEY_BID = "bid";
+    public static final String KEY_VIDE = "";
 
     //
     private String json;
 
-    public static int arrayLength;
 
     /**
      * Constructor of the JSON class
@@ -49,28 +64,57 @@ public class ParseJSONCompteurAndBilles {
      */
     protected void parseJSON(){
 
-        JSONArray jsonArray;
+        pointeur = 0;
+
+        JSONObject objtemp1;
+        JSONObject objtemp2;
+        JSONObject objtemp3;
+
+        int billes;
+        int compteurs;
+        int bid;
+
+        String initProf;
+        String noCours;
+        String nomCours;
+
         try {
-            jsonArray = new JSONArray(json);
+            ArrayList<Cours> lstCoursTemp = new ArrayList<>();
+            lstCours = new HashMap<>();
+            lstProf = new ArrayList<>();
+            profInitial = new ArrayList<>();
+            JSONObject issueObj = new JSONObject(json);
+            Iterator iterator = issueObj.keys();
+            while(iterator.hasNext()){
+                lstCoursTemp.clear();
+                initProf = (String)iterator.next();
+                if(!initProf.matches(KEY_VIDE))
+                {
+                    profInitial.add(initProf);
+                    pointeur++;
+                    objtemp1 = issueObj.getJSONObject(initProf);
+                    objtemp2 = objtemp1.getJSONObject(KEY_COURS);
+                    Iterator iterator2 = objtemp2.keys();
+                    while(iterator2.hasNext()){
+                        noCours = (String)iterator2.next();
+                        if(!noCours.matches(KEY_VIDE))
+                        {
+                            objtemp3 = objtemp2.getJSONObject(noCours);
+                            nomCours =  objtemp3.getString(KEY_COURS);
+                            billes =  objtemp3.getInt(KEY_BILLES);
+                            compteurs =  objtemp3.getInt(KEY_COMPTEUR);
+                            bid =  objtemp3.getInt(KEY_BID);
 
-            arrayLength = jsonArray.length();
+                            if(!lstCours.containsKey(noCours))
+                            {
+                                lstCours.put(noCours, nomCours);
+                            }
 
-            no = new String[jsonArray.length()];
-            titre = new String[jsonArray.length()];
-            profName = new String[jsonArray.length()];
-            nbCompteur = new String[jsonArray.length()];
-            nbBille = new String[jsonArray.length()];
-
-
-            for(int i=0;i<jsonArray.length();i++){
-
-                JSONObject e = jsonArray.getJSONObject(i);
-
-                no[i] = e.getString(KEY_NO_COURS);
-                titre[i] = e.getString(KEY_TITRE_COURS);
-                profName[i] = e.getString(KEY_PROF_NAME);
-                nbCompteur[i] = e.getString(KEY_NUMBER_COMPTER);
-                nbBille[i] = e.getString(KEY_NUMBER_BILLE);
+                            lstCoursTemp.add(new Cours(noCours,nomCours,billes,compteurs,bid));
+                        }
+                    }
+                        lstProf.add(new Prof(initProf,lstCoursTemp));
+                }
 
             }
 
@@ -78,5 +122,37 @@ public class ParseJSONCompteurAndBilles {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Boolean getProfHaveCours(String alias)
+    {
+        Boolean existe = false;
+
+        for (int i = 0; i<profInitial.size();i++) {
+
+            if(profInitial.get(i).matches(alias))
+            {
+                existe = true;
+            }
+
+        }
+
+        return existe;
+    }
+
+    public static Prof getProf(String alias)
+    {
+        Prof profTemp = null;
+
+        for (Prof prof: lstProf) {
+
+            if(prof.getInitial().matches(alias))
+            {
+                 profTemp = prof;
+            }
+
+        }
+
+        return profTemp;
     }
 }

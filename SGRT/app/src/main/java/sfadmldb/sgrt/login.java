@@ -21,17 +21,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -258,7 +261,6 @@ public class login extends AppCompatActivity {
         errorPassword.setText("");
         errorUsername.setText("");
     }
-
     /**
      * Method to send request to the web server to get response about if the user is valid and exist in the LDAP directory
      * Create an object user with his information (id, name, email) if it's correct and the consult panel is instantiate.
@@ -278,7 +280,6 @@ public class login extends AppCompatActivity {
         JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject result) {
-
                 progressBar.setVisibility(View.INVISIBLE);
 
                  ParseJSONLogin pjl = new ParseJSONLogin(result);
@@ -296,7 +297,6 @@ public class login extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 progressBar.setVisibility(View.INVISIBLE);
                 errorUsername.setText( getResources().getString(R.string.userExiste));
 
@@ -310,7 +310,22 @@ public class login extends AppCompatActivity {
             }
 
         };
+       sr.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
 
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(sr);
 
@@ -388,5 +403,26 @@ public class login extends AppCompatActivity {
     public void setImageView21(ImageView i, Integer number)
     {
         i.setImageDrawable(getResources().getDrawable(number,null));
+    }
+
+    private boolean executeCommand(){
+        System.out.println("executeCommand");
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 10.209.55.124");
+            int mExitValue = mIpAddrProcess.waitFor();
+            Toast.makeText(login.this, " mExitValue "+mExitValue, Toast.LENGTH_LONG).show();
+            if(mExitValue==0){
+                return true; }
+            else{ return false; } }
+        catch (InterruptedException ignore)
+        {
+            Toast.makeText(login.this, " Exception:"+ignore, Toast.LENGTH_LONG).show();
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(login.this, " Exception:"+e, Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }

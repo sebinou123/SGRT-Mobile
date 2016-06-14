@@ -37,9 +37,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -88,31 +86,13 @@ public class consultPanel extends AppCompatActivity {
     //Array to put in listview
     private String[] arrayBille;
     private String[] arrayCompteur;
-    private String[] arrayNoCours = {"604","603","202", "123","607"};
-    private String[] arrayTitre = { "Programmation orienté objet I","Programmation orienté objet II","Programmation orienté objet III", "Programmation d\'interfacce","Sécurité" } ;
-    private String[] arrayPriority = { "1","2","3", "4","5" };
-    private String[] arrayNomProf = { "SF","ML","DB", "JF","AD", "DC" };
-    private String[] array1 = { "","3","0", "","1" };
-    private String[] array2 = { "1","","", "","5" };
-    private String[] array3 = { "1","0","", "3","3" };
-    private String[] array4 = { "","1","", "",""};
-    private String[] array5 = { "","","1", "","" };
-    private String[] array6 = { "0","","0", "3","5" };
-    private List<String[]> arrayDonnecompteur = new ArrayList();
-    private String[] array7 = { "6","0","0", "","0" };
-    private String[] array8 = { "0","10","1", "","0" };
-    private String[] array9 = { "0","0","23", "0","0" };
-    private String[] array10 = { "2","0","", "",""};
-    private String[] array11 = { "","","0", "","1" };
-    private String[] array12 = { "0","","0", "0","0" };
-    private List<String[]> arrayDonnebille = new ArrayList();
 
     private ProgressBar progressbarChoix;
 
 
     //url to the server
-    public static final String url = "http://www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
-
+    //public static final String url = "http://www.info.climoilou.qc.ca/E2016/420-669-LI/420-669-E16-02/production/SGRT/public/";
+    public static final String url = "http://10.209.55.124/";
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
 
 
@@ -265,15 +245,11 @@ public class consultPanel extends AppCompatActivity {
                 if(itemValue.matches(getResources().getString(R.string.lstBille1)))
                 {
                     currentListItemSelected = 1;
-                    showJSON("");
-                    //currentPath = "bille/########";
-                    //sendRequestPostBilleOnly();
+                    sendRequestGetProf(currentPath);
                 }else
                 {
                     currentListItemSelected = 2;
-                    showJSON("");
-                    //currentPath = "bille#########";
-                    //sendRequestPostBilleAndCompteur()
+                    sendRequestGetProf(currentPath);
                 }
 
             }
@@ -285,15 +261,11 @@ public class consultPanel extends AppCompatActivity {
                 if(itemValue.matches(getResources().getString(R.string.lstCompteur1)))
                 {
                     currentListItemSelected = 1;
-                    showJSON("");
-                    //currentPath = "compteur/########";
-                    //sendRequestPostCompteurOnly();
+                    sendRequestGetProf(currentPath);
                 }else
                 {
                     currentListItemSelected = 2;
-                    showJSON("");
-                    //currentPath = "compteur/########";
-                    //sendRequestPostCompteurAndBille()
+                    sendRequestGetProf(currentPath);
                 }
             }
 
@@ -318,6 +290,7 @@ public class consultPanel extends AppCompatActivity {
             {
                 tblBilles.removeAllViews();
                 currentTab = "1";
+                currentPath = "gestion/getEnseignant";
 
             }
             else if(tabId.matches(tab2name))
@@ -332,6 +305,7 @@ public class consultPanel extends AppCompatActivity {
             {
                 tblCompteur.removeAllViews();
                 currentTab = "3";
+                currentPath = "gestion/getEnseignant";
 
             }
         }
@@ -381,7 +355,10 @@ public class consultPanel extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(consultPanel.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                progressbarChoix.setVisibility(View.INVISIBLE);
+                TextView txtTemp = new TextView(tblChoice.getContext());
+                txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
+                tblChoice.addView(txtTemp);
 
             }
         }){
@@ -416,6 +393,7 @@ public class consultPanel extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         progressbarChoix.setVisibility(View.INVISIBLE);
+
                         showJSON(response);
                     }
                 },
@@ -448,6 +426,8 @@ public class consultPanel extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+
+
     /**
      * Method who send a request to get counter of each teacher on each course
      * Return an error if the request fail.
@@ -455,13 +435,13 @@ public class consultPanel extends AppCompatActivity {
      *
      * @param path - the path on the server
      */
-    private void sendRequestPostCompteurOnly(String path){
+    private void sendRequestPostCompteurAndBilles(String path){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
                 new Response.Listener<String>() {
 
                     @Override
                     public void onResponse(String response) {
-                         showJSON(response);
+                        showJSON(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -489,19 +469,21 @@ public class consultPanel extends AppCompatActivity {
     }
 
     /**
-     * Method who send a request to get nomber of ball for each course for each teacher
+     * Method who send a request to get counter of each teacher on each course
      * Return an error if the request fail.
      * Call showJSON to show the data on response.
      *
      * @param path - the path on the server
      */
-    private void sendRequestPostBilleOnly(String path){
+    private void sendRequestGetProf(String path){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
                 new Response.Listener<String>() {
 
                     @Override
                     public void onResponse(String response) {
-                        showJSON(response);
+                        ParseJSONProf pjsp = new ParseJSONProf(response);
+                        pjsp.parseJSON();
+                        sendRequestGetCours("gestion/getCours");
                     }
                 },
                 new Response.ErrorListener() {
@@ -511,7 +493,7 @@ public class consultPanel extends AppCompatActivity {
                         progressbarChoix.setVisibility(View.INVISIBLE);
                         TextView txtTemp = new TextView(tblChoice.getContext());
                         txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
-                        tblBilles.addView(txtTemp);
+                        tblCompteur.addView(txtTemp);
                     }
                 }){
 
@@ -529,59 +511,21 @@ public class consultPanel extends AppCompatActivity {
     }
 
     /**
-     * Method who send a request to get for each teacher the number of ball and counter for each course.
+     * Method who send a request to get counter of each teacher on each course
      * Return an error if the request fail.
      * Call showJSON to show the data on response.
      *
      * @param path - the path on the server
      */
-    private void sendRequestPostBilleAndCompteur(String path){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
+    private void sendRequestGetCours(String path){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + path ,
                 new Response.Listener<String>() {
 
                     @Override
                     public void onResponse(String response) {
-                        showJSON(response);
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressbarChoix.setVisibility(View.INVISIBLE);
-                        TextView txtTemp = new TextView(tblChoice.getContext());
-                        txtTemp.setText(getResources().getString(R.string.lblerrorWebService));
-                        tblBilles.addView(txtTemp);
-                    }
-                }){
-
-
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("authorization", "Bearer " +  user.getUser().getToken());
-                return params;
-            }
-
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
-    /**
-     * Method who send a request to get for each teacher the number of ball and counter for each course.
-     * Return an error if the request fail.
-     * Call showJSON to show the data on response.
-     *
-     * @param path - the path on the server
-     */
-    private void sendRequestPostCompteurAndBille(String path){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url /**+ path*/ ,
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        showJSON(response);
+                        ParseJSONCours pjsc = new ParseJSONCours(response);
+                        pjsc.parseJSON();
+                        sendRequestPostCompteurAndBilles("billes/getBilles");
                     }
                 },
                 new Response.ErrorListener() {
@@ -670,28 +614,29 @@ public class consultPanel extends AppCompatActivity {
      */
     private void showJSON(String json){
 
+        TableRow row;
+        TextView txtno;
+        TextView txtvide;
+        TextView txttitre;
+        TextView nomProf;
+        TextView donnee;
+        TextView lblBandC;
+        TextView lblCandB;
+        TextView txtpriority;
+        TextView nolbl;
+        TextView titrelbl;
+        TextView prioritylbl;
+        TextView anneeChoix;
+
 
         if(currentTab.matches("1")) {
             tblBilles.removeAllViews();
             if(currentListItemSelected == 1)
             {
                 tblBilles.removeAllViews();
-               /** ParseJSONBillesOnly pjb = new ParseJSONBillesOnly(json);
-                pjb.parseJSON();*/
+                ParseJSONCompteurAndBilles pjco = new ParseJSONCompteurAndBilles(json);
+                pjco.parseJSON();
 
-                TableRow row;
-                TextView txtno;
-                TextView txtvide;
-                TextView txttitre;
-                TextView nomProf;
-                TextView donnee;
-
-                arrayDonnecompteur.add(array1);
-                arrayDonnecompteur.add(array2);
-                arrayDonnecompteur.add(array3);
-                arrayDonnecompteur.add(array4);
-                arrayDonnecompteur.add(array5);
-                arrayDonnecompteur.add(array6);
 
 
                 row = new TableRow(tblBilles.getContext());
@@ -718,11 +663,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour : arrayNoCours) {
+                for (int i = 0; i < ParseJSONCours.no.length; i++) {
 
                     txtno = new TextView(tblBilles.getContext());
 
-                    txtno.setText(arrayNoCour);
+                    txtno.setText(ParseJSONCours.no[i]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txtno, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -762,11 +707,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String anArrayTitre : arrayTitre) {
+                for (int j = 0; j < ParseJSONCours.titre.length; j++) {
 
                     txttitre = new TextView(tblBilles.getContext());
 
-                    txttitre.setText(anArrayTitre);
+                    txttitre.setText(ParseJSONCours.titre[j]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txttitre, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -786,10 +731,10 @@ public class consultPanel extends AppCompatActivity {
 
                 tblBilles.addView(row);
 
-                for (int i = 0; i < 6; i++) {
+                for (String alias : ParseJSONProf.allAlias) {
                     row = new TableRow(tblBilles.getContext());
                     nomProf = new TextView(tblBilles.getContext());
-                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setText(alias);
                     if(Build.VERSION.SDK_INT >= 21) {
                         setTextview21(nomProf, R.drawable.cell_title);
                     }else if(Build.VERSION.SDK_INT >= 16){
@@ -811,63 +756,103 @@ public class consultPanel extends AppCompatActivity {
                     }
 
                     row.addView(nomProf);
-                    for (int j = 0; j < 5; j++) {
 
-                        donnee = new TextView(tblBilles.getContext());
-                        donnee.setText(arrayDonnecompteur.get(i)[j]);
+                    if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
+                    {
+                        Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
+                                {
+                                    Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
+                                    donnee = new TextView(tblBilles.getContext());
+                                    donnee.setText("" + coursTemp.getBilles());
 
-                        if(Build.VERSION.SDK_INT >= 21) {
-                            setTextview21(donnee, R.drawable.cell);
-                        }else if(Build.VERSION.SDK_INT >= 16){
-                            setTextview16(donnee, R.drawable.cell);
-                        }else{
-                            setTextview(donnee, R.drawable.cell);
+                                    if(Build.VERSION.SDK_INT >= 21) {
+                                        setTextview21(donnee, R.drawable.cell);
+                                    }else if(Build.VERSION.SDK_INT >= 16){
+                                        setTextview16(donnee, R.drawable.cell);
+                                    }else{
+                                        setTextview(donnee, R.drawable.cell);
+                                    }
+
+                                    donnee.setPadding(50,50,50,50);
+                                    if(Build.VERSION.SDK_INT >= 17){
+                                        setTextGravity17(donnee);
+                                    }else{
+                                        setTextGravity(donnee);
+                                    }
+
+                                    if(Build.VERSION.SDK_INT >= 23){
+                                        setTextviewColor23(donnee, R.color.colorBlack);
+                                    }else{
+                                        setTextviewColor(donnee, R.color.colorBlack);
+                                    }
+
+                                    row.addView(donnee);
+                                }else{
+                                donnee = new TextView(tblBilles.getContext());
+                                donnee.setText("0");
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+                                row.addView(donnee);
+                            }
                         }
+                    }else{
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            donnee = new TextView(tblBilles.getContext());
+                            donnee.setText("0");
 
-                        donnee.setPadding(50,50,50,50);
-                        if(Build.VERSION.SDK_INT >= 17){
-                            setTextGravity17(donnee);
-                        }else{
-                            setTextGravity(donnee);
+                            if(Build.VERSION.SDK_INT >= 21) {
+                                setTextview21(donnee, R.drawable.cell);
+                            }else if(Build.VERSION.SDK_INT >= 16){
+                                setTextview16(donnee, R.drawable.cell);
+                            }else{
+                                setTextview(donnee, R.drawable.cell);
+                            }
+
+                            donnee.setPadding(50,50,50,50);
+                            if(Build.VERSION.SDK_INT >= 17){
+                                setTextGravity17(donnee);
+                            }else{
+                                setTextGravity(donnee);
+                            }
+
+                            if(Build.VERSION.SDK_INT >= 23){
+                                setTextviewColor23(donnee, R.color.colorBlack);
+                            }else{
+                                setTextviewColor(donnee, R.color.colorBlack);
+                            }
+                            row.addView(donnee);
                         }
-
-                        if(Build.VERSION.SDK_INT >= 23){
-                            setTextviewColor23(donnee, R.color.colorBlack);
-                        }else{
-                            setTextviewColor(donnee, R.color.colorBlack);
-                        }
-
-                        row.addView(donnee);
                     }
+
                     tblBilles.addView(row);
                 }
             }
             else
             {
                 tblBilles.removeAllViews();
-               /** ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
-                pjbac.parseJSON();*/
-                TableRow row;
-                TextView txtno;
-                TextView txtvide;
-                TextView txttitre;
-                TextView nomProf;
-                TextView donnee;
-                TextView lblBandC;
-
-                arrayDonnecompteur.add(array1);
-                arrayDonnecompteur.add(array2);
-                arrayDonnecompteur.add(array3);
-                arrayDonnecompteur.add(array4);
-                arrayDonnecompteur.add(array5);
-                arrayDonnecompteur.add(array6);
-                arrayDonnebille.add(array7);
-                arrayDonnebille.add(array8);
-                arrayDonnebille.add(array9);
-                arrayDonnebille.add(array10);
-                arrayDonnebille.add(array11);
-                arrayDonnebille.add(array12);
-
+                ParseJSONCompteurAndBilles pjco = new ParseJSONCompteurAndBilles(json);
+                pjco.parseJSON();
 
                 row = new TableRow(tblBilles.getContext());
 
@@ -891,11 +876,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour1 : arrayNoCours) {
+                for (int i = 0; i < ParseJSONCours.no.length; i++) {
 
                     txtno = new TextView(tblBilles.getContext());
 
-                    txtno.setText(arrayNoCour1);
+                    txtno.setText(ParseJSONCours.no[i]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txtno, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -935,11 +920,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String anArrayTitre : arrayTitre) {
+                for (int j = 0; j < ParseJSONCours.titre.length; j++) {
 
                     txttitre = new TextView(tblBilles.getContext());
 
-                    txttitre.setText(anArrayTitre);
+                    txttitre.setText(ParseJSONCours.titre[j]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txttitre, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -982,7 +967,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour : arrayNoCours) {
+                for (int i = 0; i<ParseJSONCours.no.length; i++) {
 
                     lblBandC = new TextView(tblBilles.getContext());
 
@@ -1005,11 +990,10 @@ public class consultPanel extends AppCompatActivity {
                 }
 
                 tblBilles.addView(row);
-
-                for (int i = 0; i < 6; i++) {
+                for (String alias : ParseJSONProf.allAlias) {
                     row = new TableRow(tblBilles.getContext());
                     nomProf = new TextView(tblBilles.getContext());
-                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setText(alias);
                     if(Build.VERSION.SDK_INT >= 21) {
                         setTextview21(nomProf, R.drawable.cell_title);
                     }else if(Build.VERSION.SDK_INT >= 16){
@@ -1031,32 +1015,95 @@ public class consultPanel extends AppCompatActivity {
                     }
 
                     row.addView(nomProf);
-                    for (int j = 0; j < 5; j++) {
 
-                        donnee = new TextView(tblBilles.getContext());
-                        donnee.setText(arrayDonnebille.get(i)[j] + " / " + arrayDonnecompteur.get(i)[j]);
-                        if(Build.VERSION.SDK_INT >= 21) {
-                            setTextview21(donnee, R.drawable.cell);
-                        }else if(Build.VERSION.SDK_INT >= 16){
-                            setTextview16(donnee, R.drawable.cell);
-                        }else{
-                            setTextview(donnee, R.drawable.cell);
-                        }
-                        donnee.setPadding(50,50,50,50);
-                        if(Build.VERSION.SDK_INT >= 17){
-                            setTextGravity17(donnee);
-                        }else{
-                            setTextGravity(donnee);
-                        }
+                    if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
+                    {
+                        Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
+                            {
+                                Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
+                                donnee = new TextView(tblBilles.getContext());
+                                donnee.setText(coursTemp.getBilles() + " / " + coursTemp.getCompteur());
 
-                        if(Build.VERSION.SDK_INT >= 23){
-                            setTextviewColor23(donnee, R.color.colorBlack);
-                        }else{
-                            setTextviewColor(donnee, R.color.colorBlack);
-                        }
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
 
-                        row.addView(donnee);
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+
+                                row.addView(donnee);
+                            }else{
+                                donnee = new TextView(tblCompteur.getContext());
+                                donnee.setText("0 / 0");
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+                                row.addView(donnee);
+                            }
+                        }
+                    }else{
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            donnee = new TextView(tblBilles.getContext());
+                            donnee.setText("0 / 0");
+
+                            if(Build.VERSION.SDK_INT >= 21) {
+                                setTextview21(donnee, R.drawable.cell);
+                            }else if(Build.VERSION.SDK_INT >= 16){
+                                setTextview16(donnee, R.drawable.cell);
+                            }else{
+                                setTextview(donnee, R.drawable.cell);
+                            }
+
+                            donnee.setPadding(50,50,50,50);
+                            if(Build.VERSION.SDK_INT >= 17){
+                                setTextGravity17(donnee);
+                            }else{
+                                setTextGravity(donnee);
+                            }
+
+                            if(Build.VERSION.SDK_INT >= 23){
+                                setTextviewColor23(donnee, R.color.colorBlack);
+                            }else{
+                                setTextviewColor(donnee, R.color.colorBlack);
+                            }
+                            row.addView(donnee);
+                        }
                     }
+
                     tblBilles.addView(row);
                 }
             }
@@ -1068,14 +1115,8 @@ public class consultPanel extends AppCompatActivity {
             ParseJSONChoice pjc = new ParseJSONChoice(json);
             pjc.parseJSON();
 
-            TableRow row;
-            TextView txtno;
-            TextView txttitre;
-            TextView txtpriority;
-            TextView nolbl;
-            TextView titrelbl;
-            TextView prioritylbl;
-            TextView anneeChoix;
+
+
 
             anneeChoix = new TextView(tblChoice.getContext());
             if (Build.VERSION.SDK_INT < 23) {
@@ -1211,10 +1252,6 @@ public class consultPanel extends AppCompatActivity {
                 tblChoice.addView(row);
             }
 
-
-
-
-
         }else
         {
             tblCompteur.removeAllViews();
@@ -1222,22 +1259,8 @@ public class consultPanel extends AppCompatActivity {
             if(currentListItemSelected == 1)
             {
                 tblCompteur.removeAllViews();
-               /** ParseJSONCompteurOnly pjc = new ParseJSONCompteurOnly(json);
-                pjc.parseJSON();*/
-
-                TableRow row;
-                TextView txtno;
-                TextView txtvide;
-                TextView txttitre;
-                TextView nomProf;
-                TextView donnee;
-                arrayDonnecompteur.add(array1);
-                arrayDonnecompteur.add(array2);
-                arrayDonnecompteur.add(array3);
-                arrayDonnecompteur.add(array4);
-                arrayDonnecompteur.add(array5);
-                arrayDonnecompteur.add(array6);
-
+                ParseJSONCompteurAndBilles pjco = new ParseJSONCompteurAndBilles(json);
+                pjco.parseJSON();
 
                 row = new TableRow(tblChoice.getContext());
 
@@ -1259,11 +1282,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour : arrayNoCours) {
+                for (int i = 0; i < ParseJSONCours.no.length; i++) {
 
                     txtno = new TextView(tblChoice.getContext());
 
-                    txtno.setText(arrayNoCour);
+                    txtno.setText(ParseJSONCours.no[i]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txtno, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -1303,11 +1326,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String anArrayTitre : arrayTitre) {
+                for (int j = 0; j < ParseJSONCours.titre.length; j++) {
 
                     txttitre = new TextView(tblChoice.getContext());
 
-                    txttitre.setText(anArrayTitre);
+                    txttitre.setText(ParseJSONCours.titre[j]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txttitre, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -1327,10 +1350,10 @@ public class consultPanel extends AppCompatActivity {
 
                 tblCompteur.addView(row);
 
-                for (int i = 0; i < 6; i++) {
+                for (String alias : ParseJSONProf.allAlias) {
                     row = new TableRow(tblCompteur.getContext());
                     nomProf = new TextView(tblCompteur.getContext());
-                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setText(alias);
                     if(Build.VERSION.SDK_INT >= 21) {
                         setTextview21(nomProf, R.drawable.cell_title);
                     }else if(Build.VERSION.SDK_INT >= 16){
@@ -1344,65 +1367,111 @@ public class consultPanel extends AppCompatActivity {
                     }else{
                         setTextGravity(nomProf);
                     }
+
                     if(Build.VERSION.SDK_INT >= 23){
                         setTextviewColor23(nomProf, R.color.colorBlack);
                     }else{
                         setTextviewColor(nomProf, R.color.colorBlack);
                     }
-                    row.addView(nomProf);
-                    for (int j = 0; j < 5; j++) {
 
-                        donnee = new TextView(tblCompteur.getContext());
-                        donnee.setText(arrayDonnecompteur.get(i)[j]);
-                        if(Build.VERSION.SDK_INT >= 21) {
-                            setTextview21(donnee, R.drawable.cell);
-                        }else if(Build.VERSION.SDK_INT >= 16){
-                            setTextview16(donnee, R.drawable.cell);
-                        }else{
-                            setTextview(donnee, R.drawable.cell);
+                    row.addView(nomProf);
+
+                    if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
+                    {
+                        Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
+                            {
+                                Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
+                                donnee = new TextView(tblCompteur.getContext());
+                                donnee.setText("" + coursTemp.getCompteur());
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+
+                                row.addView(donnee);
+                            }else{
+                                donnee = new TextView(tblCompteur.getContext());
+                                donnee.setText("0");
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+                                row.addView(donnee);
+                            }
                         }
-                        donnee.setPadding(50,50,50,50);
-                        if(Build.VERSION.SDK_INT >= 17){
-                            setTextGravity17(donnee);
-                        }else{
-                            setTextGravity(donnee);
+                    }else{
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            donnee = new TextView(tblCompteur.getContext());
+                            donnee.setText("0");
+
+                            if(Build.VERSION.SDK_INT >= 21) {
+                                setTextview21(donnee, R.drawable.cell);
+                            }else if(Build.VERSION.SDK_INT >= 16){
+                                setTextview16(donnee, R.drawable.cell);
+                            }else{
+                                setTextview(donnee, R.drawable.cell);
+                            }
+
+                            donnee.setPadding(50,50,50,50);
+                            if(Build.VERSION.SDK_INT >= 17){
+                                setTextGravity17(donnee);
+                            }else{
+                                setTextGravity(donnee);
+                            }
+
+                            if(Build.VERSION.SDK_INT >= 23){
+                                setTextviewColor23(donnee, R.color.colorBlack);
+                            }else{
+                                setTextviewColor(donnee, R.color.colorBlack);
+                            }
+                            row.addView(donnee);
                         }
-                        if(Build.VERSION.SDK_INT >= 23){
-                            setTextviewColor23(donnee, R.color.colorBlack);
-                        }else{
-                            setTextviewColor(donnee, R.color.colorBlack);
-                        }
-                        row.addView(donnee);
                     }
+
                     tblCompteur.addView(row);
                 }
             }
             else
             {
                 tblCompteur.removeAllViews();
-               /** ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
-                pjcab.parseJSON();*/
-
-                TableRow row;
-                TextView txtno;
-                TextView txtvide;
-                TextView txttitre;
-                TextView nomProf;
-                TextView donnee;
-                TextView lblCandB;
-                arrayDonnecompteur.add(array1);
-                arrayDonnecompteur.add(array2);
-                arrayDonnecompteur.add(array3);
-                arrayDonnecompteur.add(array4);
-                arrayDonnecompteur.add(array5);
-                arrayDonnecompteur.add(array6);
-                arrayDonnebille.add(array7);
-                arrayDonnebille.add(array8);
-                arrayDonnebille.add(array9);
-                arrayDonnebille.add(array10);
-                arrayDonnebille.add(array11);
-                arrayDonnebille.add(array12);
-
+                ParseJSONCompteurAndBilles pjco = new ParseJSONCompteurAndBilles(json);
+                pjco.parseJSON();
 
                 row = new TableRow(tblChoice.getContext());
 
@@ -1424,11 +1493,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour1 : arrayNoCours) {
+                for (int i = 0; i < ParseJSONCours.no.length; i++) {
 
                     txtno = new TextView(tblCompteur.getContext());
 
-                    txtno.setText(arrayNoCour1);
+                    txtno.setText(ParseJSONCours.no[i]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txtno, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -1468,11 +1537,11 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String anArrayTitre : arrayTitre) {
+                for (int j = 0; j < ParseJSONCours.titre.length; j++) {
 
                     txttitre = new TextView(tblCompteur.getContext());
 
-                    txttitre.setText(anArrayTitre);
+                    txttitre.setText(ParseJSONCours.titre[j]);
                     if (Build.VERSION.SDK_INT >= 21) {
                         setTextview21(txttitre, R.drawable.cell_title);
                     } else if (Build.VERSION.SDK_INT >= 16) {
@@ -1512,7 +1581,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String arrayNoCour : arrayNoCours) {
+                for (int i = 0; i < ParseJSONCours.no.length; i++) {
 
                     lblCandB = new TextView(tblCompteur.getContext());
 
@@ -1536,10 +1605,10 @@ public class consultPanel extends AppCompatActivity {
 
                 tblCompteur.addView(row);
 
-                for (int i = 0; i < 6; i++) {
+                for (String alias : ParseJSONProf.allAlias) {
                     row = new TableRow(tblCompteur.getContext());
                     nomProf = new TextView(tblCompteur.getContext());
-                    nomProf.setText(arrayNomProf[i]);
+                    nomProf.setText(alias);
                     if(Build.VERSION.SDK_INT >= 21) {
                         setTextview21(nomProf, R.drawable.cell_title);
                     }else if(Build.VERSION.SDK_INT >= 16){
@@ -1553,36 +1622,103 @@ public class consultPanel extends AppCompatActivity {
                     }else{
                         setTextGravity(nomProf);
                     }
+
                     if(Build.VERSION.SDK_INT >= 23){
                         setTextviewColor23(nomProf, R.color.colorBlack);
                     }else{
                         setTextviewColor(nomProf, R.color.colorBlack);
                     }
-                    row.addView(nomProf);
-                    for (int j = 0; j < 5; j++) {
 
-                        donnee = new TextView(tblCompteur.getContext());
-                        donnee.setText(arrayDonnecompteur.get(i)[j] + " / " + arrayDonnebille.get(i)[j] );
-                        if(Build.VERSION.SDK_INT >= 21) {
-                            setTextview21(donnee, R.drawable.cell);
-                        }else if(Build.VERSION.SDK_INT >= 16){
-                            setTextview16(donnee, R.drawable.cell);
-                        }else{
-                            setTextview(donnee, R.drawable.cell);
+                    row.addView(nomProf);
+
+                    if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
+                    {
+                        Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
+                            {
+                                Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
+                                donnee = new TextView(tblCompteur.getContext());
+                                donnee.setText(coursTemp.getCompteur() + " / " + coursTemp.getBilles());
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+
+                                row.addView(donnee);
+                            }else{
+                                donnee = new TextView(tblCompteur.getContext());
+                                donnee.setText("0 / 0");
+
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
+                                }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+                                row.addView(donnee);
+                            }
                         }
-                        donnee.setPadding(50,50,50,50);
-                        if(Build.VERSION.SDK_INT >= 17){
-                            setTextGravity17(donnee);
-                        }else{
-                            setTextGravity(donnee);
+                    }else{
+                        for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            donnee = new TextView(tblCompteur.getContext());
+                            donnee.setText("0 / 0");
+
+                            if(Build.VERSION.SDK_INT >= 21) {
+                                setTextview21(donnee, R.drawable.cell);
+                            }else if(Build.VERSION.SDK_INT >= 16){
+                                setTextview16(donnee, R.drawable.cell);
+                            }else{
+                                setTextview(donnee, R.drawable.cell);
+                            }
+
+                            donnee.setPadding(50,50,50,50);
+                            if(Build.VERSION.SDK_INT >= 17){
+                                setTextGravity17(donnee);
+                            }else{
+                                setTextGravity(donnee);
+                            }
+
+                            if(Build.VERSION.SDK_INT >= 23){
+                                setTextviewColor23(donnee, R.color.colorBlack);
+                            }else{
+                                setTextviewColor(donnee, R.color.colorBlack);
+                            }
+                            row.addView(donnee);
                         }
-                        if(Build.VERSION.SDK_INT >= 23){
-                            setTextviewColor23(donnee, R.color.colorBlack);
-                        }else{
-                            setTextviewColor(donnee, R.color.colorBlack);
-                        }
-                        row.addView(donnee);
                     }
+
                     tblCompteur.addView(row);
                 }
             }
