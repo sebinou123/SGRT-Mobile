@@ -1,6 +1,7 @@
 package sfadmldb.sgrt;
 
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +27,15 @@ public class Setting extends AppCompatActivity {
     //Button to change the language of the application
     private Button btnfr;
     private Button btnen;
-    private Button btreturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(secure.checkRootMethod() == false)
+        if(!secure.checkRootMethod())
         {
+            if(getResources().getBoolean(R.bool.portrait_only)){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
@@ -51,7 +55,7 @@ public class Setting extends AppCompatActivity {
 
         btnfr = (Button) findViewById(R.id.btnFr);
         btnen = (Button) findViewById(R.id.btnEn);
-        btreturn = (Button) findViewById(R.id.btnReturn);
+            Button btnreturn = (Button) findViewById(R.id.btnReturn);
 
         //Create an object who implements the action of touch, a listener
         ClickSurface touchListener = new ClickSurface();
@@ -59,7 +63,9 @@ public class Setting extends AppCompatActivity {
         //Add the listener to each button
         btnfr.setOnTouchListener(touchListener);
         btnen.setOnTouchListener(touchListener);
-        btreturn.setOnTouchListener(touchListener);
+            if (btnreturn != null) {
+                btnreturn.setOnTouchListener(touchListener);
+            }
         }
     }
 
@@ -84,24 +90,22 @@ public class Setting extends AppCompatActivity {
                if(v.getId() == btnfr.getId())
                 {
                     //Set french as the language for the application
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "").commit();
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "").apply();
                     setLangRecreate("");
                     Setting.langue = "";
                 }
                 else if(v.getId() == btnen.getId())
                 {
                     //Set english as the language for the application
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "en").commit();
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "en").apply();
                     setLangRecreate("en");
                     Setting.langue = "en";
                 }
-                else if(v.getId() == btreturn.getId())
+                else
                 {
                     finish();
                 }
-                else{
 
-               }
 
             }
 

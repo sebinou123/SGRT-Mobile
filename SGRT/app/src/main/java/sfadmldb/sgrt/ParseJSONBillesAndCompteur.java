@@ -48,7 +48,7 @@ public class ParseJSONBillesAndCompteur {
      */
     protected void parseJSON(){
 
-        JSONArray jsonArray=null;
+        JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(json);
 

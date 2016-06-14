@@ -10,7 +10,7 @@
     <string name="title_activity_consult_panel">consultPanel</string>
     <string name="tab1">Marbles</string>
     <string name="tab2">Course</string>
-    <string name="tab3">Times counter</string>
+    <string name="tab3">Times counters</string>
     <string name="nolbl">Number</string>
     <string name="titrelbl">Course title</string>
     <string name="prioritylbl">Priority</string>
@@ -25,7 +25,7 @@
     <string name="lstCompteur2">Counter with ball</string>
     <string name="lblBandC">Marbles / Counter</string>
     <string name="lblCandB">Counter / Marbles</string>
-    <string name="userExiste">The username \\ password is false</string>
+    <string name="userExiste">Invalid username \\ password</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="lblLogout">Logout</string>
     <string name="lblerrorWebService">Error while loading data</string>

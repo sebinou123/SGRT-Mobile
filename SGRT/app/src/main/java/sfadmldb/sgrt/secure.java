@@ -16,9 +16,6 @@ public class secure {
     public static boolean checkRootMethod(){
         String buildTags = android.os.Build.TAGS;
 
-        if (buildTags != null && buildTags.contains("test-keys")) {
-            return true;
-        }
-        return false;
+        return buildTags != null && buildTags.contains("test-keys");
     }
 }

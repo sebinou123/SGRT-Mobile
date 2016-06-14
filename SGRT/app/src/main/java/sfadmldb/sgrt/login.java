@@ -1,16 +1,16 @@
 package sfadmldb.sgrt;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -20,9 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,10 +28,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -48,10 +44,6 @@ import java.util.Map;
  *  @version 1.0
  */
 public class login extends AppCompatActivity {
-
-
-    //The logo of our project
-    private ImageView logo;
 
 
     //Label for the username and the password
@@ -92,8 +84,13 @@ public class login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if(secure.checkRootMethod() == false)
+        if(!secure.checkRootMethod())
         {
+
+            if(getResources().getBoolean(R.bool.portrait_only)){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -116,12 +113,19 @@ public class login extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        logo = (ImageView) findViewById(R.id.logoimg);
-        logo.setImageDrawable(getResources().getDrawable(R.drawable.logotrans));
+        ImageView logo = (ImageView) findViewById(R.id.logoimg);
+
+        if (logo != null) {
+            if(Build.VERSION.SDK_INT >= 21){
+                setImageView21(logo,R.drawable.logotrans);
+            }else{
+                setImageView(logo,R.drawable.logotrans);
+            }
+
+        }
 
 
-
-        errorUsername = (TextView) findViewById(R.id.errorUsername);
+            errorUsername = (TextView) findViewById(R.id.errorUsername);
         errorPassword = (TextView) findViewById(R.id.errorPassword);
 
         textUsername = (EditText) findViewById(R.id.usernametxt);
@@ -139,8 +143,13 @@ public class login extends AppCompatActivity {
         btnfr.setOnTouchListener(touchListener);
         btnen.setOnTouchListener(touchListener);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+            if (progressBar != null) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+
         }
     }
 
@@ -171,13 +180,13 @@ public class login extends AppCompatActivity {
                 else if(v.getId() == btnfr.getId())
                 {
                     //Set french as the language for the application
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "").commit();
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "").apply();
                     setLangRecreate("");
                 }
                 else if(v.getId() == btnen.getId())
                 {
                     //Set english as the language for the application
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "en").commit();
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "en").apply();
                     setLangRecreate("en");
                 }
                 else
@@ -261,7 +270,7 @@ public class login extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("username", username);
         map.put("password", password);
         map.put("web", "true");
@@ -295,7 +304,7 @@ public class login extends AppCompatActivity {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
+                HashMap<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
             }
@@ -367,5 +376,17 @@ public class login extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setLangRecreate(Setting.langue);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setImageView(ImageView i, Integer number)
+    {
+        i.setImageDrawable(getResources().getDrawable(number));
+    }
+
+    @TargetApi(21)
+    public void setImageView21(ImageView i, Integer number)
+    {
+        i.setImageDrawable(getResources().getDrawable(number,null));
     }
 }

@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="C:\Program Files\SGRT\lDAPSync\src\main\assets"/><source path="C:\Program Files\SGRT\lDAPSync\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="C:\Program Files\SGRT\lDAPSync\src\debug\assets"/></dataSet></merger>

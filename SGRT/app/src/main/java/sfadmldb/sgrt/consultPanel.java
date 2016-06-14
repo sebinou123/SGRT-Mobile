@@ -3,7 +3,9 @@ package sfadmldb.sgrt;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -30,15 +32,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +45,8 @@ import java.util.Map;
 
 
 /**
+ *  This class build an activity who show information about the choice made or not by the user, marbles and times counter on each course.
+ *  Call webservice to get informations and create table to show these data. Give the option to logout of the application.
  *
  *  @author Sébastien Fillion
  *  @version 1.0
@@ -126,8 +126,13 @@ public class consultPanel extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(secure.checkRootMethod() == false)
+        if(!secure.checkRootMethod())
         {
+
+            if(getResources().getBoolean(R.bool.portrait_only)){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consult_panel);
 
@@ -144,7 +149,10 @@ public class consultPanel extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        toolbar.setTitle("SGRT");
+        if (toolbar != null) {
+            toolbar.setTitle("SGRT");
+        }
+
         tblChoice = (TableLayout) findViewById(R.id.tblChoice);
         tblBilles = (TableLayout) findViewById(R.id.tblBilles);
         tblCompteur = (TableLayout) findViewById(R.id.tblCompteur);
@@ -153,31 +161,36 @@ public class consultPanel extends AppCompatActivity {
         BarListener listener = new BarListener();
 
         tabHost = (TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-        tabHost.setOnTabChangedListener(listener);
+        if (tabHost != null) {
+            tabHost.setup();
+            tabHost.setOnTabChangedListener(listener);
+
+            tab1name = getResources().getString(R.string.tab1);
+            tab2name = getResources().getString(R.string.tab2);
+            tab3name = getResources().getString(R.string.tab3);
+
+            //Tab 1
+            TabHost.TabSpec spec = tabHost.newTabSpec(tab1name);
+            spec.setContent(R.id.tab1);
+            spec.setIndicator(tab1name);
+            tabHost.addTab(spec);
+
+            //Tab 2
+            spec = tabHost.newTabSpec(tab2name);
+            spec.setContent(R.id.tab2);
+            spec.setIndicator(tab2name);
+            tabHost.addTab(spec);
+
+            //Tab 3
+            spec = tabHost.newTabSpec(tab3name);
+            spec.setContent(R.id.tab3);
+            spec.setIndicator(tab3name);
+            tabHost.addTab(spec);
+        }
 
 
-        tab1name = getResources().getString(R.string.tab1);
-        tab2name = getResources().getString(R.string.tab2);
-        tab3name = getResources().getString(R.string.tab3);
 
-        //Tab 1
-        TabHost.TabSpec spec = tabHost.newTabSpec(tab1name);
-        spec.setContent(R.id.tab1);
-        spec.setIndicator(tab1name);
-        tabHost.addTab(spec);
 
-        //Tab 2
-        spec = tabHost.newTabSpec(tab2name);
-        spec.setContent(R.id.tab2);
-        spec.setIndicator(tab2name);
-        tabHost.addTab(spec);
-
-        //Tab 3
-        spec = tabHost.newTabSpec(tab3name);
-        spec.setContent(R.id.tab3);
-        spec.setIndicator(tab3name);
-        tabHost.addTab(spec);
 
         ListListener lstListener = new ListListener();
 
@@ -185,30 +198,37 @@ public class consultPanel extends AppCompatActivity {
         arrayBille[0] = getResources().getString(R.string.lstBille1);
         arrayBille[1] = getResources().getString(R.string.lstBille2);
 
-        ArrayAdapter<String> myAdapterBille=new
-                ArrayAdapter<String>(
+        ArrayAdapter<String> myAdapterBille= new
+                ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 arrayBille);
         lstBille=(ListView) findViewById(R.id.listBille);
-        lstBille.setAdapter(myAdapterBille);
-        lstBille.setOnItemClickListener(lstListener);
+            if (lstBille != null) {
+                lstBille.setAdapter(myAdapterBille);
+                lstBille.setOnItemClickListener(lstListener);
+            }
+
 
         arrayCompteur = new String[2];
         arrayCompteur[0] = getResources().getString(R.string.lstCompteur1);
         arrayCompteur[1] = getResources().getString(R.string.lstCompteur2);
 
         ArrayAdapter<String> myAdapterCompteur=new
-                ArrayAdapter<String>(
+                ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 arrayCompteur);
         lstCompteur=(ListView) findViewById(R.id.listCompteur);
-        lstCompteur.setAdapter(myAdapterCompteur);
-        lstCompteur.setOnItemClickListener(lstListener);
+            if (lstCompteur != null) {
+                lstCompteur.setAdapter(myAdapterCompteur);
+            }
+            lstCompteur.setOnItemClickListener(lstListener);
 
         progressbarChoix = (ProgressBar) findViewById(R.id.progressBarChoix);
-        progressbarChoix.setVisibility(View.INVISIBLE);
+            if (progressbarChoix != null) {
+                progressbarChoix.setVisibility(View.INVISIBLE);
+            }
 
             TabWidget widget = tabHost.getTabWidget();
             for(int i = 0; i < widget.getChildCount(); i++) {
@@ -235,7 +255,7 @@ public class consultPanel extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            String  itemValue = "";
+            String  itemValue;
 
             if(parent.getId() == lstBille.getId())
             {
@@ -248,18 +268,16 @@ public class consultPanel extends AppCompatActivity {
                     showJSON("");
                     //currentPath = "bille/########";
                     //sendRequestPostBilleOnly();
-                }else if(itemValue.matches(getResources().getString(R.string.lstBille2)))
+                }else
                 {
                     currentListItemSelected = 2;
                     showJSON("");
                     //currentPath = "bille#########";
                     //sendRequestPostBilleAndCompteur()
-                }else
-                {
                 }
 
             }
-            else if(parent.getId() == lstCompteur.getId())
+            else
             {
 
                 itemValue = (String) lstCompteur.getItemAtPosition(position);
@@ -270,19 +288,15 @@ public class consultPanel extends AppCompatActivity {
                     showJSON("");
                     //currentPath = "compteur/########";
                     //sendRequestPostCompteurOnly();
-                }else if(itemValue.matches(getResources().getString(R.string.lstCompteur2)))
+                }else
                 {
                     currentListItemSelected = 2;
                     showJSON("");
                     //currentPath = "compteur/########";
                     //sendRequestPostCompteurAndBille()
-                }else
-                {
                 }
             }
-            else{
 
-            }
 
         }
     }
@@ -337,7 +351,7 @@ public class consultPanel extends AppCompatActivity {
 
         progressbarChoix.setVisibility(View.VISIBLE);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("user_id", user.getUser().getId());
         map.put("web", "true");
 
@@ -373,7 +387,7 @@ public class consultPanel extends AppCompatActivity {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
+                HashMap<String, String> headers = new HashMap<>();
                 headers.put("authorization", "Bearer " +  user.getUser().getToken());
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
@@ -417,12 +431,12 @@ public class consultPanel extends AppCompatActivity {
                 }){
             @Override
             protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("user_id",user.getUser().getId());
                 return params;
             }
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
@@ -463,7 +477,7 @@ public class consultPanel extends AppCompatActivity {
 
 
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
@@ -503,7 +517,7 @@ public class consultPanel extends AppCompatActivity {
 
 
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
@@ -543,7 +557,7 @@ public class consultPanel extends AppCompatActivity {
 
 
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
@@ -583,7 +597,7 @@ public class consultPanel extends AppCompatActivity {
 
 
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", "Bearer " +  user.getUser().getToken());
                 return params;
             }
@@ -594,12 +608,68 @@ public class consultPanel extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    public void setTextGravity(TextView t)
+    {
+        t.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+
+    }
+
+    @TargetApi(17)
+    public void setTextGravity17(TextView t)
+    {
+        t.setGravity(View.TEXT_ALIGNMENT_CENTER);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setTextview(TextView t, Integer i)
+    {
+        t.setBackgroundDrawable(getResources().getDrawable(i));
+    }
+
+    @SuppressWarnings("deprecation")
+    @TargetApi(16)
+    public void setTextview16(TextView t, Integer i)
+    {
+        t.setBackground(getResources().getDrawable(i));
+    }
+
+    @TargetApi(21)
+    public void setTextview21(TextView t, Integer i)
+    {
+        t.setBackground(getResources().getDrawable(i,null));
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setTextviewColor(TextView t, Integer i)
+    {
+        t.setTextColor(getResources().getColor(i));
+    }
+
+    @TargetApi(23)
+    public void setTextviewColor23(TextView t, Integer i)
+    {
+        t.setTextColor(getResources().getColor(i,null));
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setTextApparence(TextView t, Integer i)
+    {
+        t.setTextAppearance(this, i);
+    }
+
+    @TargetApi(23)
+    public void setTextApparence23(TextView t, Integer i)
+    {
+        t.setTextAppearance(i);
+    }
+
     /**
      * Method to show the data according to the selected tab and list
      *
      * @param json - the json response
      */
     private void showJSON(String json){
+
 
         if(currentTab.matches("1")) {
             tblBilles.removeAllViews();
@@ -615,6 +685,7 @@ public class consultPanel extends AppCompatActivity {
                 TextView txttitre;
                 TextView nomProf;
                 TextView donnee;
+
                 arrayDonnecompteur.add(array1);
                 arrayDonnecompteur.add(array2);
                 arrayDonnecompteur.add(array3);
@@ -627,20 +698,44 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblBilles.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
+
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
+
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour : arrayNoCours) {
 
                     txtno = new TextView(tblBilles.getContext());
 
-                    txtno.setText(arrayNoCours[i]);
-                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txtno.setPadding(50,50,50,50);
-                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txtno.setText(arrayNoCour);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txtno, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txtno, R.drawable.cell_title);
+                    } else {
+                        setTextview(txtno, R.drawable.cell_title);
+                    }
+                    txtno.setPadding(50, 50, 50, 50);
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(txtno);
+                    }else{
+                        setTextGravity(txtno);
+                    }
 
                     row.addView(txtno);
                 }
@@ -651,20 +746,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblBilles.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayTitre.length; i++) {
+                for (String anArrayTitre : arrayTitre) {
 
                     txttitre = new TextView(tblBilles.getContext());
 
-                    txttitre.setText(arrayTitre[i]);
-                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txttitre.setPadding(50,50,50,50);
-                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txttitre.setText(anArrayTitre);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txttitre, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txttitre, R.drawable.cell_title);
+                    } else {
+                        setTextview(txttitre, R.drawable.cell_title);
+                    }
+                    txttitre.setPadding(50, 50, 50, 50);
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(txttitre);
+                    }else{
+                        setTextGravity(txttitre);
+                    }
 
                     row.addView(txttitre);
                 }
@@ -675,25 +790,59 @@ public class consultPanel extends AppCompatActivity {
                     row = new TableRow(tblBilles.getContext());
                     nomProf = new TextView(tblBilles.getContext());
                     nomProf.setText(arrayNomProf[i]);
-                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    if(Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(nomProf, R.drawable.cell_title);
+                    }else if(Build.VERSION.SDK_INT >= 16){
+                        setTextview16(nomProf, R.drawable.cell_title);
+                    }else{
+                        setTextview(nomProf, R.drawable.cell_title);
+                    }
                     nomProf.setPadding(50,50,50,50);
-                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(nomProf);
+                    }else{
+                        setTextGravity(nomProf);
+                    }
+
+                    if(Build.VERSION.SDK_INT >= 23){
+                        setTextviewColor23(nomProf, R.color.colorBlack);
+                    }else{
+                        setTextviewColor(nomProf, R.color.colorBlack);
+                    }
+
                     row.addView(nomProf);
                     for (int j = 0; j < 5; j++) {
 
                         donnee = new TextView(tblBilles.getContext());
                         donnee.setText(arrayDonnecompteur.get(i)[j]);
-                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+
+                        if(Build.VERSION.SDK_INT >= 21) {
+                            setTextview21(donnee, R.drawable.cell);
+                        }else if(Build.VERSION.SDK_INT >= 16){
+                            setTextview16(donnee, R.drawable.cell);
+                        }else{
+                            setTextview(donnee, R.drawable.cell);
+                        }
+
                         donnee.setPadding(50,50,50,50);
-                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        if(Build.VERSION.SDK_INT >= 17){
+                            setTextGravity17(donnee);
+                        }else{
+                            setTextGravity(donnee);
+                        }
+
+                        if(Build.VERSION.SDK_INT >= 23){
+                            setTextviewColor23(donnee, R.color.colorBlack);
+                        }else{
+                            setTextviewColor(donnee, R.color.colorBlack);
+                        }
+
                         row.addView(donnee);
                     }
-                    tblBilles.addView(row);;
+                    tblBilles.addView(row);
                 }
             }
-            else if(currentListItemSelected == 2)
+            else
             {
                 tblBilles.removeAllViews();
                /** ParseJSONBillesAndCompteur pjbac = new ParseJSONBillesAndCompteur(json);
@@ -705,6 +854,7 @@ public class consultPanel extends AppCompatActivity {
                 TextView nomProf;
                 TextView donnee;
                 TextView lblBandC;
+
                 arrayDonnecompteur.add(array1);
                 arrayDonnecompteur.add(array2);
                 arrayDonnecompteur.add(array3);
@@ -723,20 +873,42 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblBilles.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
+
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour1 : arrayNoCours) {
 
                     txtno = new TextView(tblBilles.getContext());
 
-                    txtno.setText(arrayNoCours[i]);
-                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txtno.setPadding(50,50,50,50);
-                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txtno.setText(arrayNoCour1);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txtno, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txtno, R.drawable.cell_title);
+                    } else {
+                        setTextview(txtno, R.drawable.cell_title);
+                    }
+                    txtno.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txtno);
+                    } else {
+                        setTextGravity(txtno);
+                    }
 
                     row.addView(txtno);
                 }
@@ -747,20 +919,41 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblBilles.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayTitre.length; i++) {
+                for (String anArrayTitre : arrayTitre) {
 
                     txttitre = new TextView(tblBilles.getContext());
 
-                    txttitre.setText(arrayTitre[i]);
-                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txttitre.setPadding(50,50,50,50);
-                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txttitre.setText(anArrayTitre);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txttitre, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txttitre, R.drawable.cell_title);
+                    } else {
+                        setTextview(txttitre, R.drawable.cell_title);
+                    }
+
+                    txttitre.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txttitre);
+                    } else {
+                        setTextGravity(txttitre);
+                    }
 
                     row.addView(txttitre);
                 }
@@ -771,20 +964,42 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblBilles.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
+
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour : arrayNoCours) {
 
                     lblBandC = new TextView(tblBilles.getContext());
 
                     lblBandC.setText(getResources().getString(R.string.lblBandC));
-                    lblBandC.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    lblBandC.setPadding(50,50,50,50);
-                    lblBandC.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(lblBandC, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(lblBandC, R.drawable.cell_title);
+                    } else {
+                        setTextview(lblBandC, R.drawable.cell_title);
+                    }
+                    lblBandC.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(lblBandC);
+                    } else {
+                        setTextGravity(lblBandC);
+                    }
 
                     row.addView(lblBandC);
                 }
@@ -795,24 +1010,56 @@ public class consultPanel extends AppCompatActivity {
                     row = new TableRow(tblBilles.getContext());
                     nomProf = new TextView(tblBilles.getContext());
                     nomProf.setText(arrayNomProf[i]);
-                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    if(Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(nomProf, R.drawable.cell_title);
+                    }else if(Build.VERSION.SDK_INT >= 16){
+                        setTextview16(nomProf, R.drawable.cell_title);
+                    }else{
+                        setTextview(nomProf, R.drawable.cell_title);
+                    }
                     nomProf.setPadding(50,50,50,50);
-                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(nomProf);
+                    }else{
+                        setTextGravity(nomProf);
+                    }
+
+                    if(Build.VERSION.SDK_INT >= 23){
+                        setTextviewColor23(nomProf, R.color.colorBlack);
+                    }else{
+                        setTextviewColor(nomProf, R.color.colorBlack);
+                    }
+
                     row.addView(nomProf);
                     for (int j = 0; j < 5; j++) {
 
                         donnee = new TextView(tblBilles.getContext());
                         donnee.setText(arrayDonnebille.get(i)[j] + " / " + arrayDonnecompteur.get(i)[j]);
-                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        if(Build.VERSION.SDK_INT >= 21) {
+                            setTextview21(donnee, R.drawable.cell);
+                        }else if(Build.VERSION.SDK_INT >= 16){
+                            setTextview16(donnee, R.drawable.cell);
+                        }else{
+                            setTextview(donnee, R.drawable.cell);
+                        }
                         donnee.setPadding(50,50,50,50);
-                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        if(Build.VERSION.SDK_INT >= 17){
+                            setTextGravity17(donnee);
+                        }else{
+                            setTextGravity(donnee);
+                        }
+
+                        if(Build.VERSION.SDK_INT >= 23){
+                            setTextviewColor23(donnee, R.color.colorBlack);
+                        }else{
+                            setTextviewColor(donnee, R.color.colorBlack);
+                        }
+
                         row.addView(donnee);
                     }
-                    tblBilles.addView(row);;
+                    tblBilles.addView(row);
                 }
-            }else{}
+            }
         }
         else if(currentTab.matches("2"))
         {
@@ -831,7 +1078,11 @@ public class consultPanel extends AppCompatActivity {
             TextView anneeChoix;
 
             anneeChoix = new TextView(tblChoice.getContext());
-            anneeChoix.setTextAppearance(this,R.style.CustomTitleText);
+            if (Build.VERSION.SDK_INT < 23) {
+                setTextApparence(anneeChoix,R.style.CustomTitleText);
+            } else {
+                setTextApparence23(anneeChoix,R.style.CustomTitleText);
+            }
             anneeChoix.setText(getResources().getString(R.string.choiceTitle)+ " " + ParseJSONChoiceFait.annee[0]);
             anneeChoix.setPadding(0,50,0,50);
             anneeChoix.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -843,17 +1094,47 @@ public class consultPanel extends AppCompatActivity {
             prioritylbl = new TextView(tblChoice.getContext());
 
             nolbl.setText(getResources().getString(R.string.nolbl));
-            nolbl.setBackground(getResources().getDrawable(R.drawable.cell_title));
+            if(Build.VERSION.SDK_INT >= 21) {
+                setTextview21(nolbl, R.drawable.cell_title);
+            }else if(Build.VERSION.SDK_INT >= 16){
+                setTextview16(nolbl, R.drawable.cell_title);
+            }else{
+                setTextview(nolbl, R.drawable.cell_title);
+            }
             nolbl.setPadding(50,50,50,50);
-            nolbl.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            if(Build.VERSION.SDK_INT >= 17){
+                setTextGravity17(nolbl);
+            }else{
+                setTextGravity(nolbl);
+            }
             titrelbl.setText(getResources().getString(R.string.titrelbl));
-            titrelbl.setBackground(getResources().getDrawable(R.drawable.cell_title));
+            if(Build.VERSION.SDK_INT >= 21) {
+                setTextview21(titrelbl, R.drawable.cell_title);
+            }else if(Build.VERSION.SDK_INT >= 16){
+                setTextview16(titrelbl, R.drawable.cell_title);
+            }else{
+                setTextview(titrelbl, R.drawable.cell_title);
+            }
             titrelbl.setPadding(50,50,50,50);
-            titrelbl.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            if(Build.VERSION.SDK_INT >= 17){
+                setTextGravity17(titrelbl);
+            }else{
+                setTextGravity(titrelbl);
+            }
             prioritylbl.setText(getResources().getString(R.string.prioritylbl));
-            prioritylbl.setBackground(getResources().getDrawable(R.drawable.cell_title));
+            if(Build.VERSION.SDK_INT >= 21) {
+                setTextview21(prioritylbl, R.drawable.cell_title);
+            }else if(Build.VERSION.SDK_INT >= 16){
+                setTextview16(prioritylbl, R.drawable.cell_title);
+            }else{
+                setTextview(prioritylbl, R.drawable.cell_title);
+            }
             prioritylbl.setPadding(50,50,50,50);
-            prioritylbl.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            if(Build.VERSION.SDK_INT >= 17){
+                setTextGravity17(prioritylbl);
+            }else{
+                setTextGravity(prioritylbl);
+            }
 
 
             row.addView(nolbl);
@@ -866,24 +1147,66 @@ public class consultPanel extends AppCompatActivity {
                 row = new TableRow(tblChoice.getContext());
                 txtno = new TextView(tblChoice.getContext());
                 txtno.setText(ParseJSONChoice.no[i]);
-                txtno.setBackground(getResources().getDrawable(R.drawable.cell));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtno, R.drawable.cell);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtno, R.drawable.cell);
+                }else{
+                    setTextview(txtno, R.drawable.cell);
+                }
                 txtno.setPadding(50,50,50,50);
-                txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                txtno.setTextColor(getResources().getColor(R.color.colorBlack));
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtno);
+                }else{
+                    setTextGravity(txtno);
+                }
+                if(Build.VERSION.SDK_INT >= 23){
+                    setTextviewColor23(txtno, R.color.colorBlack);
+                }else{
+                    setTextviewColor(txtno, R.color.colorBlack);
+                }
                 row.addView(txtno);
                 txttitre = new TextView(tblChoice.getContext());
                 txttitre.setText(ParseJSONChoice.titre[i]);
-                txttitre.setBackground(getResources().getDrawable(R.drawable.cell));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txttitre, R.drawable.cell);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txttitre, R.drawable.cell);
+                }else{
+                    setTextview(txttitre, R.drawable.cell);
+                }
                 txttitre.setPadding(50,50,50,50);
-                txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                txttitre.setTextColor(getResources().getColor(R.color.colorBlack));
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txttitre);
+                }else{
+                    setTextGravity(txttitre);
+                }
+                if(Build.VERSION.SDK_INT >= 23){
+                    setTextviewColor23(txttitre, R.color.colorBlack);
+                }else{
+                    setTextviewColor(txttitre, R.color.colorBlack);
+                }
                 row.addView(txttitre);
                 txtpriority = new TextView(tblChoice.getContext());
                 txtpriority.setText(ParseJSONChoice.priority[i]);
-                txtpriority.setBackground(getResources().getDrawable(R.drawable.cell));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtpriority, R.drawable.cell);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtpriority, R.drawable.cell);
+                }else{
+                    setTextview(txtpriority, R.drawable.cell);
+                }
                 txtpriority.setPadding(50,50,50,50);
-                txtpriority.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                txtpriority.setTextColor(getResources().getColor(R.color.colorBlack));
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtpriority);
+                }else{
+                    setTextGravity(txtpriority);
+                }
+                if(Build.VERSION.SDK_INT >= 23){
+                    setTextviewColor23(txtpriority, R.color.colorBlack);
+                }else{
+                    setTextviewColor(txtpriority, R.color.colorBlack);
+                }
                 row.addView(txtpriority);
                 tblChoice.addView(row);
             }
@@ -892,7 +1215,7 @@ public class consultPanel extends AppCompatActivity {
 
 
 
-        }else if(currentTab.matches("3"))
+        }else
         {
             tblCompteur.removeAllViews();
 
@@ -920,20 +1243,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblChoice.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour : arrayNoCours) {
 
                     txtno = new TextView(tblChoice.getContext());
 
-                    txtno.setText(arrayNoCours[i]);
-                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txtno.setPadding(50,50,50,50);
-                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txtno.setText(arrayNoCour);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txtno, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txtno, R.drawable.cell_title);
+                    } else {
+                        setTextview(txtno, R.drawable.cell_title);
+                    }
+                    txtno.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txtno);
+                    } else {
+                        setTextGravity(txtno);
+                    }
 
                     row.addView(txtno);
                 }
@@ -944,20 +1287,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblChoice.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayTitre.length; i++) {
+                for (String anArrayTitre : arrayTitre) {
 
                     txttitre = new TextView(tblChoice.getContext());
 
-                    txttitre.setText(arrayTitre[i]);
-                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txttitre.setPadding(50,50,50,50);
-                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txttitre.setText(anArrayTitre);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txttitre, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txttitre, R.drawable.cell_title);
+                    } else {
+                        setTextview(txttitre, R.drawable.cell_title);
+                    }
+                    txttitre.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txttitre);
+                    } else {
+                        setTextGravity(txttitre);
+                    }
 
                     row.addView(txttitre);
                 }
@@ -968,25 +1331,53 @@ public class consultPanel extends AppCompatActivity {
                     row = new TableRow(tblCompteur.getContext());
                     nomProf = new TextView(tblCompteur.getContext());
                     nomProf.setText(arrayNomProf[i]);
-                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    if(Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(nomProf, R.drawable.cell_title);
+                    }else if(Build.VERSION.SDK_INT >= 16){
+                        setTextview16(nomProf, R.drawable.cell_title);
+                    }else{
+                        setTextview(nomProf, R.drawable.cell_title);
+                    }
                     nomProf.setPadding(50,50,50,50);
-                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(nomProf);
+                    }else{
+                        setTextGravity(nomProf);
+                    }
+                    if(Build.VERSION.SDK_INT >= 23){
+                        setTextviewColor23(nomProf, R.color.colorBlack);
+                    }else{
+                        setTextviewColor(nomProf, R.color.colorBlack);
+                    }
                     row.addView(nomProf);
                     for (int j = 0; j < 5; j++) {
 
                         donnee = new TextView(tblCompteur.getContext());
                         donnee.setText(arrayDonnecompteur.get(i)[j]);
-                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        if(Build.VERSION.SDK_INT >= 21) {
+                            setTextview21(donnee, R.drawable.cell);
+                        }else if(Build.VERSION.SDK_INT >= 16){
+                            setTextview16(donnee, R.drawable.cell);
+                        }else{
+                            setTextview(donnee, R.drawable.cell);
+                        }
                         donnee.setPadding(50,50,50,50);
-                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        if(Build.VERSION.SDK_INT >= 17){
+                            setTextGravity17(donnee);
+                        }else{
+                            setTextGravity(donnee);
+                        }
+                        if(Build.VERSION.SDK_INT >= 23){
+                            setTextviewColor23(donnee, R.color.colorBlack);
+                        }else{
+                            setTextviewColor(donnee, R.color.colorBlack);
+                        }
                         row.addView(donnee);
                     }
-                    tblCompteur.addView(row);;
+                    tblCompteur.addView(row);
                 }
             }
-            else if(currentListItemSelected == 2)
+            else
             {
                 tblCompteur.removeAllViews();
                /** ParseJSONCompteurAndBilles pjcab = new ParseJSONCompteurAndBilles(json);
@@ -1017,20 +1408,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblChoice.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour1 : arrayNoCours) {
 
                     txtno = new TextView(tblCompteur.getContext());
 
-                    txtno.setText(arrayNoCours[i]);
-                    txtno.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txtno.setPadding(50,50,50,50);
-                    txtno.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txtno.setText(arrayNoCour1);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txtno, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txtno, R.drawable.cell_title);
+                    } else {
+                        setTextview(txtno, R.drawable.cell_title);
+                    }
+                    txtno.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txtno);
+                    } else {
+                        setTextGravity(txtno);
+                    }
 
                     row.addView(txtno);
                 }
@@ -1041,20 +1452,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblCompteur.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayTitre.length; i++) {
+                for (String anArrayTitre : arrayTitre) {
 
                     txttitre = new TextView(tblCompteur.getContext());
 
-                    txttitre.setText(arrayTitre[i]);
-                    txttitre.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    txttitre.setPadding(50,50,50,50);
-                    txttitre.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    txttitre.setText(anArrayTitre);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(txttitre, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(txttitre, R.drawable.cell_title);
+                    } else {
+                        setTextview(txttitre, R.drawable.cell_title);
+                    }
+                    txttitre.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(txttitre);
+                    } else {
+                        setTextGravity(txttitre);
+                    }
 
                     row.addView(txttitre);
                 }
@@ -1065,20 +1496,40 @@ public class consultPanel extends AppCompatActivity {
 
                 txtvide = new TextView(tblCompteur.getContext());
                 txtvide.setText("");
-                txtvide.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                if(Build.VERSION.SDK_INT >= 21) {
+                    setTextview21(txtvide, R.drawable.cell_title);
+                }else if(Build.VERSION.SDK_INT >= 16){
+                    setTextview16(txtvide, R.drawable.cell_title);
+                }else{
+                    setTextview(txtvide, R.drawable.cell_title);
+                }
                 txtvide.setPadding(50,50,50,50);
-                txtvide.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if(Build.VERSION.SDK_INT >= 17){
+                    setTextGravity17(txtvide);
+                }else{
+                    setTextGravity(txtvide);
+                }
 
                 row.addView(txtvide);
 
-                for (int i = 0; i < arrayNoCours.length; i++) {
+                for (String arrayNoCour : arrayNoCours) {
 
                     lblCandB = new TextView(tblCompteur.getContext());
 
                     lblCandB.setText(getResources().getString(R.string.lblCandB));
-                    lblCandB.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
-                    lblCandB.setPadding(50,50,50,50);
-                    lblCandB.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(lblCandB, R.drawable.cell_title);
+                    } else if (Build.VERSION.SDK_INT >= 16) {
+                        setTextview16(lblCandB, R.drawable.cell_title);
+                    } else {
+                        setTextview(lblCandB, R.drawable.cell_title);
+                    }
+                    lblCandB.setPadding(50, 50, 50, 50);
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        setTextGravity17(lblCandB);
+                    } else {
+                        setTextGravity(lblCandB);
+                    }
 
                     row.addView(lblCandB);
                 }
@@ -1089,24 +1540,52 @@ public class consultPanel extends AppCompatActivity {
                     row = new TableRow(tblCompteur.getContext());
                     nomProf = new TextView(tblCompteur.getContext());
                     nomProf.setText(arrayNomProf[i]);
-                    nomProf.setBackground(getResources().getDrawable(R.drawable.cell_title,null));
+                    if(Build.VERSION.SDK_INT >= 21) {
+                        setTextview21(nomProf, R.drawable.cell_title);
+                    }else if(Build.VERSION.SDK_INT >= 16){
+                        setTextview16(nomProf, R.drawable.cell_title);
+                    }else{
+                        setTextview(nomProf, R.drawable.cell_title);
+                    }
                     nomProf.setPadding(50,50,50,50);
-                    nomProf.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                    nomProf.setTextColor(getResources().getColor(R.color.colorBlack));
+                    if(Build.VERSION.SDK_INT >= 17){
+                        setTextGravity17(nomProf);
+                    }else{
+                        setTextGravity(nomProf);
+                    }
+                    if(Build.VERSION.SDK_INT >= 23){
+                        setTextviewColor23(nomProf, R.color.colorBlack);
+                    }else{
+                        setTextviewColor(nomProf, R.color.colorBlack);
+                    }
                     row.addView(nomProf);
                     for (int j = 0; j < 5; j++) {
 
                         donnee = new TextView(tblCompteur.getContext());
                         donnee.setText(arrayDonnecompteur.get(i)[j] + " / " + arrayDonnebille.get(i)[j] );
-                        donnee.setBackground(getResources().getDrawable(R.drawable.cell,null));
+                        if(Build.VERSION.SDK_INT >= 21) {
+                            setTextview21(donnee, R.drawable.cell);
+                        }else if(Build.VERSION.SDK_INT >= 16){
+                            setTextview16(donnee, R.drawable.cell);
+                        }else{
+                            setTextview(donnee, R.drawable.cell);
+                        }
                         donnee.setPadding(50,50,50,50);
-                        donnee.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                        donnee.setTextColor(getResources().getColor(R.color.colorBlack));
+                        if(Build.VERSION.SDK_INT >= 17){
+                            setTextGravity17(donnee);
+                        }else{
+                            setTextGravity(donnee);
+                        }
+                        if(Build.VERSION.SDK_INT >= 23){
+                            setTextviewColor23(donnee, R.color.colorBlack);
+                        }else{
+                            setTextviewColor(donnee, R.color.colorBlack);
+                        }
                         row.addView(donnee);
                     }
-                    tblCompteur.addView(row);;
+                    tblCompteur.addView(row);
                 }
-            }else{}
+            }
 
         }
 
@@ -1190,10 +1669,13 @@ public class consultPanel extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
 
+        boolean keyPressed = false;
+
         if(keyCode==KeyEvent.KEYCODE_BACK)
         {
+            keyPressed = true;
         }
 
-        return true;
+        return keyPressed;
     }
 }

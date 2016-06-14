@@ -1,6 +1,5 @@
 package sfadmldb.sgrt;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
