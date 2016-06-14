@@ -77,7 +77,10 @@ public class login extends AppCompatActivity {
     String username;
     String password;
 
+    //Progress bar waiting on login
     ProgressBar progressBar;
+
+    private RequestQueue requestQueue;
 
 
 
@@ -314,8 +317,7 @@ public class login extends AppCompatActivity {
 
         };
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(sr);
+        objectRequest(sr);
 
     }
 
@@ -391,5 +393,13 @@ public class login extends AppCompatActivity {
     public void setImageView21(ImageView i, Integer number)
     {
         i.setImageDrawable(getResources().getDrawable(number,null));
+    }
+
+    public void objectRequest(JsonObjectRequest request) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(login.this);
+        }
+            requestQueue.add(request);
+
     }
 }

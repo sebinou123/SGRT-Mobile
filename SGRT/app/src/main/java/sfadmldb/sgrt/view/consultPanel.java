@@ -1,6 +1,7 @@
 package sfadmldb.sgrt.view;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -26,7 +27,7 @@ import android.widget.TabWidget;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -39,6 +40,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +116,8 @@ public class consultPanel extends AppCompatActivity {
     public static final String url = "http://10.209.55.124/";
 
     static final int PICK_CONTACT_REQUEST = 1;  // The request code
+
+    private RequestQueue requestQueue;
 
 
 
@@ -373,16 +377,19 @@ public class consultPanel extends AppCompatActivity {
 
                 if(itemValue.matches(getResources().getString(R.string.listSpinner2)))
                 {
+                    currentPath = "choix/choixStatus";
                     currentSpinnerItemSelected = 0;
                     sendRequestPostChoix(currentPath);
                 }
                 else if(itemValue.matches(getResources().getString(R.string.listSpinner3)))
                 {
+                    currentPath = "choix/choixStatus";
                     currentSpinnerItemSelected = 1;
                     sendRequestPostChoix(currentPath);
                 }
                 else if(itemValue.matches(getResources().getString(R.string.listSpinner4)))
                 {
+                    currentPath = "choix/choixStatus";
                     currentSpinnerItemSelected = 2;
                     sendRequestPostChoix(currentPath);
                 }
@@ -458,10 +465,9 @@ public class consultPanel extends AppCompatActivity {
         JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject result) {
-
+                errorLoadingTextChoice.setText("");
                 progressbarChoix.setVisibility(View.INVISIBLE);
-                Toast.makeText(consultPanel.this,result.toString(),Toast.LENGTH_SHORT).show();
-
+                deleteCache(consultPanel.this);
                     ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(result);
                     pjcf.parseJSON();
                     if(ParseJSONChoiceFait.nbChoix[0] || ParseJSONChoiceFait.nbChoix[1] || ParseJSONChoiceFait.nbChoix[2])
@@ -494,8 +500,7 @@ public class consultPanel extends AppCompatActivity {
             }
 
         };
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(sr);
+        objectRequest(sr);
 
     }
 
@@ -516,8 +521,9 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
+                        errorLoadingTextChoice.setText("");
                         progressbarChoix.setVisibility(View.INVISIBLE);
-
+                        deleteCache(consultPanel.this);
                         showJSON(response);
                     }
                 },
@@ -545,8 +551,7 @@ public class consultPanel extends AppCompatActivity {
         };
 
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        stringRequest(stringRequest);
     }
 
 
@@ -571,6 +576,15 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
+                        if(currentTab.matches("1")){
+                            errorLoadingTextBilles.setText("");
+                            progressbarBilles.setVisibility(View.INVISIBLE);
+                        }else{
+                            errorLoadingTextCompteur.setText("");
+                            progressbarCompteur.setVisibility(View.INVISIBLE);
+                        }
+
+                        deleteCache(consultPanel.this);
                        showJSON(response);
                     }
                 },
@@ -580,11 +594,11 @@ public class consultPanel extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
 
                         if(currentTab.matches("1")){
-                            progressbarBilles.setVisibility(View.INVISIBLE);
                             errorLoadingTextBilles.setText(getResources().getString(R.string.lblerrorWebService));
+                            progressbarBilles.setVisibility(View.INVISIBLE);
                         }else{
-                            progressbarCompteur.setVisibility(View.INVISIBLE);
                             errorLoadingTextCompteur.setText(getResources().getString(R.string.lblerrorWebService));
+                            progressbarCompteur.setVisibility(View.INVISIBLE);
                         }
                     }
                 }){
@@ -598,8 +612,8 @@ public class consultPanel extends AppCompatActivity {
 
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        stringRequest(stringRequest);
+
     }
 
     /**
@@ -622,6 +636,16 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
+
+                        if(currentTab.matches("1")){
+                            errorLoadingTextBilles.setText("");
+                            progressbarBilles.setVisibility(View.INVISIBLE);
+                        }else{
+                            errorLoadingTextCompteur.setText("");
+                            progressbarCompteur.setVisibility(View.INVISIBLE);
+                        }
+
+                        deleteCache(consultPanel.this);
                         ParseJSONProf pjsp = new ParseJSONProf(response);
                         pjsp.parseJSON();
                         sendRequestGetCours("gestion/getCours");
@@ -651,8 +675,7 @@ public class consultPanel extends AppCompatActivity {
 
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        stringRequest(stringRequest);
     }
 
     /**
@@ -675,6 +698,16 @@ public class consultPanel extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
+
+                        if(currentTab.matches("1")){
+                            errorLoadingTextBilles.setText("");
+                            progressbarBilles.setVisibility(View.INVISIBLE);
+                        }else{
+                            errorLoadingTextCompteur.setText("");
+                            progressbarCompteur.setVisibility(View.INVISIBLE);
+                        }
+
+                        deleteCache(consultPanel.this);
                         ParseJSONCours pjsc = new ParseJSONCours(response);
                         pjsc.parseJSON();
                         sendRequestPostCompteurAndBilles("billes/getBilles");
@@ -704,8 +737,7 @@ public class consultPanel extends AppCompatActivity {
 
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        stringRequest(stringRequest);
     }
 
     public void setTextGravity(TextView t)
@@ -916,35 +948,35 @@ public class consultPanel extends AppCompatActivity {
                         Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
                         for (int k = 0; k<ParseJSONCours.no.length; k++) {
                             if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
-                                {
-                                    Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
-                                    donnee = new TextView(tblBilles.getContext());
-                                    String affichage = "" + coursTemp.getBilles();
-                                    donnee.setText(affichage);
+                            {
+                                Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
+                                donnee = new TextView(tblBilles.getContext());
+                                String affichageDonneesCandB = "" + coursTemp.getBilles();
+                                donnee.setText(affichageDonneesCandB);
 
-                                    if(Build.VERSION.SDK_INT >= 21) {
-                                        setTextview21(donnee, R.drawable.cell);
-                                    }else if(Build.VERSION.SDK_INT >= 16){
-                                        setTextview16(donnee, R.drawable.cell);
-                                    }else{
-                                        setTextview(donnee, R.drawable.cell);
-                                    }
-
-                                    donnee.setPadding(50,50,50,50);
-                                    if(Build.VERSION.SDK_INT >= 17){
-                                        setTextGravity17(donnee);
-                                    }else{
-                                        setTextGravity(donnee);
-                                    }
-
-                                    if(Build.VERSION.SDK_INT >= 23){
-                                        setTextviewColor23(donnee, R.color.colorBlack);
-                                    }else{
-                                        setTextviewColor(donnee, R.color.colorBlack);
-                                    }
-
-                                    row.addView(donnee);
+                                if(Build.VERSION.SDK_INT >= 21) {
+                                    setTextview21(donnee, R.drawable.cell);
+                                }else if(Build.VERSION.SDK_INT >= 16){
+                                    setTextview16(donnee, R.drawable.cell);
                                 }else{
+                                    setTextview(donnee, R.drawable.cell);
+                                }
+
+                                donnee.setPadding(50,50,50,50);
+                                if(Build.VERSION.SDK_INT >= 17){
+                                    setTextGravity17(donnee);
+                                }else{
+                                    setTextGravity(donnee);
+                                }
+
+                                if(Build.VERSION.SDK_INT >= 23){
+                                    setTextviewColor23(donnee, R.color.colorBlack);
+                                }else{
+                                    setTextviewColor(donnee, R.color.colorBlack);
+                                }
+
+                                row.addView(donnee);
+                            }else{
                                 donnee = new TextView(tblBilles.getContext());
                                 donnee.setText("0");
 
@@ -972,8 +1004,7 @@ public class consultPanel extends AppCompatActivity {
                             }
                         }
                     }else{
-                        int i = 0;
-                        while (i < ParseJSONCours.no.length) {
+                        for (String string : ParseJSONCours.no) {
                             donnee = new TextView(tblBilles.getContext());
                             donnee.setText("0");
 
@@ -1123,8 +1154,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                int j = 0;
-                while (j < ParseJSONCours.no.length) {
+                for(String string : ParseJSONCours.no) {
 
                     lblBandC = new TextView(tblBilles.getContext());
 
@@ -1251,8 +1281,7 @@ public class consultPanel extends AppCompatActivity {
                             }
                         }
                     }else{
-                        int k = 0;
-                        while (k < ParseJSONCours.no.length) {
+                        for (String string : ParseJSONCours.no) {
                             donnee = new TextView(tblBilles.getContext());
                             donnee.setText("0 / 0");
 
@@ -1626,8 +1655,7 @@ public class consultPanel extends AppCompatActivity {
                             }
                         }
                     }else{
-                        int l = 0;
-                        while (l < ParseJSONCours.no.length) {
+                        for (String string : ParseJSONCours.no) {
                             donnee = new TextView(tblCompteur.getContext());
                             donnee.setText("0");
 
@@ -1772,8 +1800,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                int m = 0;
-                while (m < ParseJSONCours.no.length) {
+                for (String string : ParseJSONCours.no) {
 
                     lblCandB = new TextView(tblCompteur.getContext());
 
@@ -1900,8 +1927,7 @@ public class consultPanel extends AppCompatActivity {
                             }
                         }
                     }else{
-                        int n = 0;
-                        while (n < ParseJSONCours.no.length) {
+                        for (String string : ParseJSONCours.no) {
                             donnee = new TextView(tblCompteur.getContext());
                             donnee.setText("0 / 0");
 
@@ -2027,5 +2053,66 @@ public class consultPanel extends AppCompatActivity {
         }
 
         return keyPressed;
+    }
+
+    /**
+     * Method who add request to the queue
+     *
+     * @param request - StringRequest
+     */
+    public void stringRequest(StringRequest request) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(consultPanel.this);
+        }
+            requestQueue.add(request);
+    }
+
+    /**
+     * Method who add request to the queue
+     *
+     * @param request - ObjectRequest
+     */
+    public void objectRequest(JsonObjectRequest request) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(consultPanel.this);
+        }
+            requestQueue.add(request);
+    }
+
+    /**
+     * Method to clear the cash after the request on webservice
+     *
+     * @param context - current context
+     */
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+
+    /**
+     *  Method to access the cash folder and delete it to free memory
+     *
+     * @param dir - file of cash
+     *
+     * @return - if an error occure on delete
+     */
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        }
+        else if(dir!= null && dir.isFile())
+            return dir.delete();
+        else {
+            return false;
+        }
     }
 }

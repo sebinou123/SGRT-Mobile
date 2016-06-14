@@ -17,7 +17,9 @@ public class ParseJSONChoice {
 
     //Parameter of the JSON file
     public static ArrayList<ArrayList<String[]>> cours;
-    public static ArrayList<String[]> coursDonnes;
+    public static ArrayList<String[]> coursDonnesEte;
+    public static ArrayList<String[]> coursDonnesAutomne;
+    public static ArrayList<String[]> coursDonnesHiver;
     public static String[] no;
     public static String[] titre;
     public static String[] priority;
@@ -28,12 +30,15 @@ public class ParseJSONChoice {
     public static final String KEY_NO_COURS = "cou_no";
     public static final String KEY_TITRE_COURS = "cou_titre";
     public static final String KEY_PRIORITY_COURS = "chx_priorite";
+    public static final String KEY_AUTOMNE = "1";
+    public static final String KEY_HIVER = "2";
+    public static final String KEY_ETE = "3";
 
     //String json push by the web service
     private String json;
 
     //json length
-    public static int arrayLength;
+    public static int arrayLength = 5;
 
     /**
      * Constructor of the JSON class
@@ -55,11 +60,9 @@ public class ParseJSONChoice {
             jsonObject = new JSONObject(json);
 
             cours = new ArrayList<>();
-            coursDonnes = new ArrayList<>();
+            coursDonnesAutomne = new ArrayList<>();
 
-            JSONArray a1 = jsonObject.getJSONArray("1");
-
-            arrayLength = a1.length();
+            JSONArray a1 = jsonObject.getJSONArray(KEY_AUTOMNE);
 
             no = new String[a1.length()];
             titre = new String[a1.length()];
@@ -74,13 +77,15 @@ public class ParseJSONChoice {
                 titre[i] = objtemp.getString(KEY_TITRE_COURS);
             }
 
-            coursDonnes.add(priority);
-            coursDonnes.add(no);
-            coursDonnes.add(titre);
+            coursDonnesAutomne.add(no);
+            coursDonnesAutomne.add(titre);
+            coursDonnesAutomne.add(priority);
 
-            cours.add(coursDonnes);
+            cours.add(coursDonnesAutomne);
 
-            JSONArray a2 = jsonObject.getJSONArray("2");
+            JSONArray a2 = jsonObject.getJSONArray(KEY_HIVER);
+
+            coursDonnesHiver = new ArrayList<>();
 
             no = new String[a2.length()];
             titre = new String[a2.length()];
@@ -95,13 +100,15 @@ public class ParseJSONChoice {
                 titre[i] = objtemp.getString(KEY_TITRE_COURS);
             }
 
-            coursDonnes.add(priority);
-            coursDonnes.add(no);
-            coursDonnes.add(titre);
+            coursDonnesHiver.add(no);
+            coursDonnesHiver.add(titre);
+            coursDonnesHiver.add(priority);
 
-            cours.add(coursDonnes);
+            cours.add(coursDonnesHiver);
 
-            JSONArray a3 = jsonObject.getJSONArray("3");
+            JSONArray a3 = jsonObject.getJSONArray(KEY_ETE);
+
+            coursDonnesEte = new ArrayList<>();
 
             no = new String[a3.length()];
             titre = new String[a3.length()];
@@ -116,11 +123,11 @@ public class ParseJSONChoice {
                 titre[i] = objtemp.getString(KEY_TITRE_COURS);
             }
 
-            coursDonnes.add(priority);
-            coursDonnes.add(no);
-            coursDonnes.add(titre);
+            coursDonnesEte.add(no);
+            coursDonnesEte.add(titre);
+            coursDonnesEte.add(priority);
 
-            cours.add(coursDonnes);
+            cours.add(coursDonnesEte);
 
 
         } catch (JSONException e) {

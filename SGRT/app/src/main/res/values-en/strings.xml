@@ -18,7 +18,7 @@
     <string name="french">French</string>
     <string name="english">English</string>
     <string name="returnbtn">return</string>
-    <string name="errorChoice">You did not made your choice of task for the current year, please go to SGRT.com to make your choice.</string>
+    <string name="errorChoice">Wheter the task for the selected session is unavailable or you didn\'t made your choice of task for the current year, please go to SGRT.com to make your choice.</string>
     <string name="lstBille1">Marbles only</string>
     <string name="lstBille2">Marbles with counter</string>
     <string name="lstBille2alt">Marbles with counter and Bid</string>

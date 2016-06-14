@@ -40,20 +40,15 @@ public class ParseJSONChoiceFait {
      */
     public void parseJSON(){
 
-        nbChoix = new Boolean[1];
         annee = new String[1];
-
-
 
         try {
             JSONObject objectTemp = json.getJSONObject(KEY_NB_CHOIX);
+            nbChoix = new Boolean[objectTemp.length()];
             nbChoix[0] = objectTemp.getBoolean(KEY_SESSION_AUTOMNE);
             nbChoix[1] = objectTemp.getBoolean(KEY_SESSION_HIVER);
             nbChoix[2] = objectTemp.getBoolean(KEY_SESSION_ETE);
             annee[0] = json.getString(KEY_ANNEE);
-
-
-
 
         } catch (JSONException e) {
             e.printStackTrace();

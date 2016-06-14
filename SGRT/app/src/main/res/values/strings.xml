@@ -18,7 +18,7 @@
     <string name="french">Français</string>
     <string name="english">Anglais</string>
     <string name="returnbtn">retour</string>
-    <string name="errorChoice">Vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT.com pour faire vos choix.</string>
+    <string name="errorChoice">Soit la tâche pour la session choisie est indisponible, soit vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT.com pour faire vos choix.</string>
     <string name="lstBille1">Billes seulement</string>
     <string name="lstBille2">Billes avec compteur</string>
     <string name="lstBille2alt">Billes avec compteur et Bid</string>
