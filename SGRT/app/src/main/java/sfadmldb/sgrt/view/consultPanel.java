@@ -1,7 +1,8 @@
 package sfadmldb.sgrt.view;
 
 import android.annotation.TargetApi;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -40,7 +41,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +48,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import sfadmldb.sgrt.model.Cours;
+import sfadmldb.sgrt.model.Memory;
 import sfadmldb.sgrt.model.ParseJSONChoice;
 import sfadmldb.sgrt.model.ParseJSONChoiceFait;
 import sfadmldb.sgrt.model.ParseJSONCompteurAndBilles;
@@ -55,7 +56,6 @@ import sfadmldb.sgrt.model.ParseJSONCours;
 import sfadmldb.sgrt.model.ParseJSONProf;
 import sfadmldb.sgrt.model.Prof;
 import sfadmldb.sgrt.R;
-import sfadmldb.sgrt.model.Setting;
 import sfadmldb.sgrt.model.secure;
 import sfadmldb.sgrt.model.user;
 
@@ -67,7 +67,7 @@ import sfadmldb.sgrt.model.user;
  *  @author Sébastien Fillion
  *  @version 1.0
  */
-public class consultPanel extends AppCompatActivity {
+public class ConsultPanel extends AppCompatActivity {
 
     //The tab of each view ball, choice and counter
     TabHost tabHost;
@@ -115,8 +115,15 @@ public class consultPanel extends AppCompatActivity {
     //url to the server
     public static final String url = "http://10.209.55.124/";
 
-    static final int PICK_CONTACT_REQUEST = 1;  // The request code
+    //Default when there are no data about marbles, counter and bid
+    private static final String defaultBillesOrCompteur = "0";
+    private static final String defaultBillesAndCompteur = "0 / 0";
+    private static final String defaultBillesAndCompteurAndBid = "0 / 0 / 0";
 
+    // The request code
+    static final int PICK_CONTACT_REQUEST = 1;
+
+    //Object to call request to the server
     private RequestQueue requestQueue;
 
 
@@ -144,6 +151,7 @@ public class consultPanel extends AppCompatActivity {
         Configuration config = getBaseContext().getResources().getConfiguration();
 
         String lang = settings.getString("LANG", "");
+
         if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang)) {
             Locale locale = new Locale(lang);
             Locale.setDefault(locale);
@@ -161,19 +169,20 @@ public class consultPanel extends AppCompatActivity {
         tblBilles = (TableLayout) findViewById(R.id.tblBilles);
         tblCompteur = (TableLayout) findViewById(R.id.tblCompteur);
 
-        errorLoadingTextChoice = (TextView) findViewById(R.id.errorLoadDonneesChoice);
+        errorLoadingTextChoice = (TextView) findViewById(R.id.errorLoadDonnees);
         errorLoadingTextBilles = (TextView) findViewById(R.id.errorLoadDonneesBilles);
         errorLoadingTextCompteur = (TextView) findViewById(R.id.errorLoadDonneesCompteur);
 
-            TextView spinnerTitle = (TextView) findViewById(R.id.spinnerTitle);
-            if (spinnerTitle != null) {
-                spinnerTitle.setText(getResources().getString(R.string.lblSpinnerTitle));
-            }
+        TextView spinnerTitle = (TextView) findViewById(R.id.spinnerTitle);
+        if (spinnerTitle != null) {
+            spinnerTitle.setText(getResources().getString(R.string.lblSpinnerTitle));
+        }
 
-            setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         BarListener listener = new BarListener();
 
         tabHost = (TabHost)findViewById(R.id.tabHost);
+
         if (tabHost != null) {
 
             tabHost.setup();
@@ -204,7 +213,7 @@ public class consultPanel extends AppCompatActivity {
 
         ListListener lstListener = new ListListener();
 
-            String[] arrayBille = new String[2];
+        String[] arrayBille = new String[2];
         arrayBille[0] = getResources().getString(R.string.lstBille1);
         arrayBille[1] = getResources().getString(R.string.lstBille2);
 
@@ -220,7 +229,7 @@ public class consultPanel extends AppCompatActivity {
             }
 
 
-            String[] arrayCompteur = new String[2];
+        String[] arrayCompteur = new String[2];
         arrayCompteur[0] = getResources().getString(R.string.lstCompteur1);
         arrayCompteur[1] = getResources().getString(R.string.lstCompteur2);
 
@@ -230,58 +239,59 @@ public class consultPanel extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 arrayCompteur);
         lstCompteur=(ListView) findViewById(R.id.listCompteur);
-            if (lstCompteur != null) {
-                lstCompteur.setAdapter(myAdapterCompteur);
-                lstCompteur.setOnItemClickListener(lstListener);
-            }
 
-            progressbarChoix = (ProgressBar) findViewById(R.id.progressBarChoix);
+        if (lstCompteur != null) {
+            lstCompteur.setAdapter(myAdapterCompteur);
+            lstCompteur.setOnItemClickListener(lstListener);
+        }
 
-            if (progressbarChoix != null) {
-                progressbarChoix.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
-                progressbarChoix.setVisibility(View.INVISIBLE);
-            }
+        progressbarChoix = (ProgressBar) findViewById(R.id.progressBarChoix);
 
-            progressbarBilles = (ProgressBar) findViewById(R.id.progressBarBilles);
+        if (progressbarChoix != null) {
+            progressbarChoix.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressbarChoix.setVisibility(View.INVISIBLE);
+        }
 
-            if (progressbarBilles != null) {
-                progressbarBilles.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
-                progressbarBilles.setVisibility(View.INVISIBLE);
-            }
+        progressbarBilles = (ProgressBar) findViewById(R.id.progressBarBilles);
 
-            progressbarCompteur = (ProgressBar) findViewById(R.id.progressBarCompteur);
+        if (progressbarBilles != null) {
+            progressbarBilles.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressbarBilles.setVisibility(View.INVISIBLE);
+        }
 
-            if (progressbarCompteur != null) {
-                progressbarCompteur.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
-                progressbarCompteur.setVisibility(View.INVISIBLE);
-            }
+        progressbarCompteur = (ProgressBar) findViewById(R.id.progressBarCompteur);
 
-            TabWidget widget = tabHost.getTabWidget();
-            for(int i = 0; i < widget.getChildCount(); i++) {
-                View v = widget.getChildAt(i);
-                v.setBackgroundResource(R.drawable.apptheme_tab_indicator_holo);
-            }
+        if (progressbarCompteur != null) {
+            progressbarCompteur.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressbarCompteur.setVisibility(View.INVISIBLE);
+        }
 
-            SpinnerListener spinnerListener = new SpinnerListener();
+        TabWidget widget = tabHost.getTabWidget();
 
-            listSession = (Spinner) findViewById(R.id.spinnerSession);
+        for(int i = 0; i < widget.getChildCount(); i++) {
+            View v = widget.getChildAt(i);
+            v.setBackgroundResource(R.drawable.apptheme_tab_indicator_holo);
+        }
 
-            List<String> spinnerList = new ArrayList<>();
-            spinnerList.add(getResources().getString(R.string.listSpinner1));
-            spinnerList.add(getResources().getString(R.string.listSpinner2));
-            spinnerList.add(getResources().getString(R.string.listSpinner3));
-            spinnerList.add(getResources().getString(R.string.listSpinner4));
+        SpinnerListener spinnerListener = new SpinnerListener();
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    spinnerList
-            );
-            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-           listSession.setAdapter(adapter);
-            listSession.setOnItemSelectedListener(spinnerListener);
+        listSession = (Spinner) findViewById(R.id.spinnerSession);
 
+        List<String> spinnerList = new ArrayList<>();
+        spinnerList.add(getResources().getString(R.string.listSpinner1));
+        spinnerList.add(getResources().getString(R.string.listSpinner2));
+        spinnerList.add(getResources().getString(R.string.listSpinner3));
+        spinnerList.add(getResources().getString(R.string.listSpinner4));
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+               this,
+               android.R.layout.simple_spinner_item,
+               spinnerList
+         );
+
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        listSession.setAdapter(adapter);
+        listSession.setOnItemSelectedListener(spinnerListener);
         }
     }
 
@@ -429,9 +439,10 @@ public class consultPanel extends AppCompatActivity {
             else if(tabId.matches(tab2name))
             {
                 tblChoice.removeAllViews();
-               currentTab = "2";
-               currentPath = "choix/choixStatus";
+                currentTab = "2";
+                currentPath = "choix/choixStatus";
                 currentSpinnerItemSelected = 0;
+                errorLoadingTextChoice.setText("");
             }
             else
             {
@@ -462,12 +473,12 @@ public class consultPanel extends AppCompatActivity {
         map.put("user_id", user.getUser().getId());
         map.put("web", "true");
 
-        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
+        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, ConsultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject result) {
                 errorLoadingTextChoice.setText("");
                 progressbarChoix.setVisibility(View.INVISIBLE);
-                deleteCache(consultPanel.this);
+                Memory.deleteCache(ConsultPanel.this);
                     ParseJSONChoiceFait pjcf = new ParseJSONChoiceFait(result);
                     pjcf.parseJSON();
                     if(ParseJSONChoiceFait.nbChoix[0] || ParseJSONChoiceFait.nbChoix[1] || ParseJSONChoiceFait.nbChoix[2])
@@ -523,7 +534,7 @@ public class consultPanel extends AppCompatActivity {
                     public void onResponse(String response) {
                         errorLoadingTextChoice.setText("");
                         progressbarChoix.setVisibility(View.INVISIBLE);
-                        deleteCache(consultPanel.this);
+                        Memory.deleteCache(ConsultPanel.this);
                         showJSON(response);
                     }
                 },
@@ -539,7 +550,7 @@ public class consultPanel extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<>();
-                params.put("user_id",user.getUser().getId());
+                params.put("user_id", user.getUser().getId());
                 return params;
             }
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -584,7 +595,7 @@ public class consultPanel extends AppCompatActivity {
                             progressbarCompteur.setVisibility(View.INVISIBLE);
                         }
 
-                        deleteCache(consultPanel.this);
+                        Memory.deleteCache(ConsultPanel.this);
                        showJSON(response);
                     }
                 },
@@ -645,7 +656,7 @@ public class consultPanel extends AppCompatActivity {
                             progressbarCompteur.setVisibility(View.INVISIBLE);
                         }
 
-                        deleteCache(consultPanel.this);
+                        Memory.deleteCache(ConsultPanel.this);
                         ParseJSONProf pjsp = new ParseJSONProf(response);
                         pjsp.parseJSON();
                         sendRequestGetCours("gestion/getCours");
@@ -707,7 +718,7 @@ public class consultPanel extends AppCompatActivity {
                             progressbarCompteur.setVisibility(View.INVISIBLE);
                         }
 
-                        deleteCache(consultPanel.this);
+                        Memory.deleteCache(ConsultPanel.this);
                         ParseJSONCours pjsc = new ParseJSONCours(response);
                         pjsc.parseJSON();
                         sendRequestPostCompteurAndBilles("billes/getBilles");
@@ -740,24 +751,46 @@ public class consultPanel extends AppCompatActivity {
         stringRequest(stringRequest);
     }
 
+    /**
+     * Method call to set the gravity of a textview for api < 17
+     *
+     * @param t - the textView
+     */
     public void setTextGravity(TextView t)
     {
         t.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
     }
 
+    /**
+     * Method call to set the gravity of a textview for api >= 17
+     *
+     * @param t - the textView
+     */
     @TargetApi(17)
     public void setTextGravity17(TextView t)
     {
-        t.setGravity(View.TEXT_ALIGNMENT_CENTER);
+        t.setGravity(Gravity.CENTER);
     }
 
+    /**
+     * Method call to set the backgroundDrawable of a textview for api < 16
+     *
+     * @param t - the textView
+     * @param i - resource id
+     */
     @SuppressWarnings("deprecation")
     public void setTextview(TextView t, Integer i)
     {
         t.setBackgroundDrawable(getResources().getDrawable(i));
     }
 
+    /**
+     * Method call to set the backgroundDrawable of a textview for api == 16
+     *
+     * @param t - the textView
+     * @param i - resource id
+     */
     @SuppressWarnings("deprecation")
     @TargetApi(16)
     public void setTextview16(TextView t, Integer i)
@@ -765,30 +798,60 @@ public class consultPanel extends AppCompatActivity {
         t.setBackground(getResources().getDrawable(i));
     }
 
+    /**
+     * Method call to set the backgroundDrawable of a textview for api >= 21
+     *
+     * @param t - the textView
+     * @param i - resource id
+     */
     @TargetApi(21)
     public void setTextview21(TextView t, Integer i)
     {
         t.setBackground(getResources().getDrawable(i,null));
     }
 
+    /**
+     * Method call to set the color of a textview for api < 23
+     *
+     * @param t - the textview
+     * @param i - resource id
+     */
     @SuppressWarnings("deprecation")
     public void setTextviewColor(TextView t, Integer i)
     {
         t.setTextColor(getResources().getColor(i));
     }
 
+    /**
+     * Method call to set the color of a textview for api == 23
+     *
+     * @param t - the textview
+     * @param i - resource id
+     */
     @TargetApi(23)
     public void setTextviewColor23(TextView t, Integer i)
     {
         t.setTextColor(getResources().getColor(i,null));
     }
 
+    /**
+     * Method call to set the textApparence of a textview for api < 23
+     *
+     * @param t - the textview
+     * @param i - resource id
+     */
     @SuppressWarnings("deprecation")
     public void setTextApparence(TextView t, Integer i)
     {
         t.setTextAppearance(this, i);
     }
 
+    /**
+     * Method call to set the textApparence of a textview for api == 23
+     *
+     * @param t - the textview
+     * @param i - resource id
+     */
     @TargetApi(23)
     public void setTextApparence23(TextView t, Integer i)
     {
@@ -817,6 +880,7 @@ public class consultPanel extends AppCompatActivity {
         TextView anneeChoix;
 
 
+        //marbles tab
         if(currentTab.matches("1")) {
             tblBilles.removeAllViews();
             if(currentListItemSelected == 1)
@@ -943,10 +1007,12 @@ public class consultPanel extends AppCompatActivity {
 
                     row.addView(nomProf);
 
+                    //If we have data for each teacher, else we show default value
                     if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
                     {
                         Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
                         for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            //If we have data for a specific course
                             if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
                             {
                                 Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
@@ -976,9 +1042,10 @@ public class consultPanel extends AppCompatActivity {
                                 }
 
                                 row.addView(donnee);
+                            //Default marbles
                             }else{
                                 donnee = new TextView(tblBilles.getContext());
-                                donnee.setText("0");
+                                donnee.setText(defaultBillesOrCompteur);
 
                                 if(Build.VERSION.SDK_INT >= 21) {
                                     setTextview21(donnee, R.drawable.cell);
@@ -1004,9 +1071,9 @@ public class consultPanel extends AppCompatActivity {
                             }
                         }
                     }else{
-                        for (String string : ParseJSONCours.no) {
+                        for (String ignored : ParseJSONCours.no) {
                             donnee = new TextView(tblBilles.getContext());
-                            donnee.setText("0");
+                            donnee.setText(defaultBillesOrCompteur);
 
                             if (Build.VERSION.SDK_INT >= 21) {
                                 setTextview21(donnee, R.drawable.cell);
@@ -1035,6 +1102,7 @@ public class consultPanel extends AppCompatActivity {
                     tblBilles.addView(row);
                 }
             }
+            //mables and counter
             else
             {
                 tblBilles.removeAllViews();
@@ -1154,7 +1222,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for(String string : ParseJSONCours.no) {
+                for(String ignored : ParseJSONCours.no) {
 
                     lblBandC = new TextView(tblBilles.getContext());
 
@@ -1208,10 +1276,12 @@ public class consultPanel extends AppCompatActivity {
 
                     row.addView(nomProf);
 
+                    //If we have data for each teacher, else we show default value
                     if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
                     {
                         Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
                         for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            //If we have data for a specific course
                             if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
                             {
                                 Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
@@ -1248,13 +1318,15 @@ public class consultPanel extends AppCompatActivity {
                                 }
 
                                 row.addView(donnee);
+                            //Default marbles and counter
                             }else{
                                 donnee = new TextView(tblCompteur.getContext());
-                                donnee.setText("0 / 0");
+                                donnee.setText(defaultBillesAndCompteur);
 
+                                //Default marbles, counter and bid
                                 if(ParseJSONCompteurAndBilles.afficherBid)
                                 {
-                                    donnee.setText("0 / 0 / 0");
+                                    donnee.setText(defaultBillesAndCompteurAndBid);
                                 }
 
                                 if(Build.VERSION.SDK_INT >= 21) {
@@ -1280,13 +1352,15 @@ public class consultPanel extends AppCompatActivity {
                                 row.addView(donnee);
                             }
                         }
+                    //default counter and marbles
                     }else{
-                        for (String string : ParseJSONCours.no) {
+                        for (String ignored : ParseJSONCours.no) {
                             donnee = new TextView(tblBilles.getContext());
-                            donnee.setText("0 / 0");
+                            donnee.setText(defaultBillesAndCompteur);
 
+                            //Default marbles, counter and bid
                             if (ParseJSONCompteurAndBilles.afficherBid) {
-                                donnee.setText("0 / 0 / 0");
+                                donnee.setText(defaultBillesAndCompteurAndBid);
                             }
 
                             if (Build.VERSION.SDK_INT >= 21) {
@@ -1317,6 +1391,7 @@ public class consultPanel extends AppCompatActivity {
                 }
             }
         }
+        //choice tab
         else if(currentTab.matches("2"))
         {
 
@@ -1594,10 +1669,12 @@ public class consultPanel extends AppCompatActivity {
 
                     row.addView(nomProf);
 
+                    //If we have data for each teacher, else we show default value
                     if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
                     {
                         Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
                         for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            //If we have data for a specific course
                             if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
                             {
                                 Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
@@ -1627,9 +1704,10 @@ public class consultPanel extends AppCompatActivity {
                                 }
 
                                 row.addView(donnee);
+                            //Default counter
                             }else{
                                 donnee = new TextView(tblCompteur.getContext());
-                                donnee.setText("0");
+                                donnee.setText(defaultBillesOrCompteur);
 
                                 if(Build.VERSION.SDK_INT >= 21) {
                                     setTextview21(donnee, R.drawable.cell);
@@ -1654,10 +1732,11 @@ public class consultPanel extends AppCompatActivity {
                                 row.addView(donnee);
                             }
                         }
+                    //Default counter
                     }else{
-                        for (String string : ParseJSONCours.no) {
+                        for (String ignored : ParseJSONCours.no) {
                             donnee = new TextView(tblCompteur.getContext());
-                            donnee.setText("0");
+                            donnee.setText(defaultBillesOrCompteur);
 
                             if (Build.VERSION.SDK_INT >= 21) {
                                 setTextview21(donnee, R.drawable.cell);
@@ -1800,7 +1879,7 @@ public class consultPanel extends AppCompatActivity {
 
                 row.addView(txtvide);
 
-                for (String string : ParseJSONCours.no) {
+                for (String ignored : ParseJSONCours.no) {
 
                     lblCandB = new TextView(tblCompteur.getContext());
 
@@ -1855,10 +1934,12 @@ public class consultPanel extends AppCompatActivity {
 
                     row.addView(nomProf);
 
+                    //If we have data for each teacher, else we show default value
                     if(ParseJSONCompteurAndBilles.getProfHaveCours(alias))
                     {
                         Prof profTemp = ParseJSONCompteurAndBilles.getProf(alias);
                         for (int k = 0; k<ParseJSONCours.no.length; k++) {
+                            //If we have data for a specific course
                             if(profTemp.getCoursExiste(ParseJSONCours.no[k]) != null)
                             {
                                 Cours coursTemp = profTemp.getCoursExiste(ParseJSONCours.no[k]);
@@ -1894,13 +1975,15 @@ public class consultPanel extends AppCompatActivity {
                                 }
 
                                 row.addView(donnee);
+                            //Default Counter, marbles
                             }else{
                                 donnee = new TextView(tblCompteur.getContext());
-                                donnee.setText("0 / 0");
+                                donnee.setText(defaultBillesAndCompteur);
 
+                                //Default Counter, marbles and bid
                                 if(ParseJSONCompteurAndBilles.afficherBid)
                                 {
-                                    donnee.setText("0 / 0 / 0");
+                                    donnee.setText(defaultBillesAndCompteurAndBid);
                                 }
 
                                 if(Build.VERSION.SDK_INT >= 21) {
@@ -1926,13 +2009,15 @@ public class consultPanel extends AppCompatActivity {
                                 row.addView(donnee);
                             }
                         }
+                    //Default Counter, marbles
                     }else{
-                        for (String string : ParseJSONCours.no) {
+                        for (String ignored : ParseJSONCours.no) {
                             donnee = new TextView(tblCompteur.getContext());
-                            donnee.setText("0 / 0");
+                            donnee.setText(defaultBillesAndCompteur);
 
+                            //Default Counter, marbles and bid
                             if (ParseJSONCompteurAndBilles.afficherBid) {
-                                donnee.setText("0 / 0 / 0");
+                                donnee.setText(defaultBillesAndCompteurAndBid);
                             }
 
                             if (Build.VERSION.SDK_INT >= 21) {
@@ -1995,15 +2080,36 @@ public class consultPanel extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, Setting.class);
             startActivityForResult(intent, PICK_CONTACT_REQUEST);
         } else if (id == R.id.action_logout) {
-            this.finish();
+            new AlertDialog.Builder(ConsultPanel.this)
+                    .setTitle(getResources().getString(R.string.lblLogout))
+                    .setMessage(getResources().getString(R.string.lblLogoutDetail))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            closeActivity();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Method who close the current activity
+     */
+    private void closeActivity(){
+
+         this.finish();
     }
 
     /**
@@ -2060,9 +2166,9 @@ public class consultPanel extends AppCompatActivity {
      *
      * @param request - StringRequest
      */
-    public void stringRequest(StringRequest request) {
+    private void stringRequest(StringRequest request) {
         if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(consultPanel.this);
+            requestQueue = Volley.newRequestQueue(ConsultPanel.this);
         }
             requestQueue.add(request);
     }
@@ -2072,47 +2178,12 @@ public class consultPanel extends AppCompatActivity {
      *
      * @param request - ObjectRequest
      */
-    public void objectRequest(JsonObjectRequest request) {
+    private void objectRequest(JsonObjectRequest request) {
         if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(consultPanel.this);
+            requestQueue = Volley.newRequestQueue(ConsultPanel.this);
         }
             requestQueue.add(request);
     }
 
-    /**
-     * Method to clear the cash after the request on webservice
-     *
-     * @param context - current context
-     */
-    public static void deleteCache(Context context) {
-        try {
-            File dir = context.getCacheDir();
-            deleteDir(dir);
-        } catch (Exception e) {}
-    }
 
-    /**
-     *  Method to access the cash folder and delete it to free memory
-     *
-     * @param dir - file of cash
-     *
-     * @return - if an error occure on delete
-     */
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-            return dir.delete();
-        }
-        else if(dir!= null && dir.isFile())
-            return dir.delete();
-        else {
-            return false;
-        }
-    }
 }

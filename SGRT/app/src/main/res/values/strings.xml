@@ -17,11 +17,11 @@
     <string name="languagelbl">Langage :</string>
     <string name="french">Français</string>
     <string name="english">Anglais</string>
-    <string name="returnbtn">retour</string>
-    <string name="errorChoice">Soit la tâche pour la session choisie est indisponible, soit vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT.com pour faire vos choix.</string>
+    <string name="returnbtn">Retour</string>
+    <string name="errorChoice">Soit la tâche pour la session choisie est indisponible, soit vous n\'avez pas fait votre choix de cours pour l\'année en cours, rendez-vous sur le site du SGRT pour faire vos choix.</string>
     <string name="lstBille1">Billes seulement</string>
     <string name="lstBille2">Billes avec compteur</string>
-    <string name="lstBille2alt">Billes avec compteur et Bid</string>
+    <string name="lstBille2alt">Billes avec compteurs et Bid</string>
     <string name="lstCompteur1">Compteurs seulement</string>
     <string name="lstCompteur2">Compteurs avec billes</string>
     <string name="lstCompteur2alt">Compteurs avec billes et Bid</string>
@@ -39,5 +39,8 @@
     <string name="listSpinner3">H</string>
     <string name="listSpinner4">E</string>
     <string name="lblSpinnerTitle">Session</string>
+    <string name="yes">oui</string>
+    <string name="no">non</string>
+    <string name="lblLogoutDetail">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="section_format">Hello World from section: %1$d</string>
 </resources>

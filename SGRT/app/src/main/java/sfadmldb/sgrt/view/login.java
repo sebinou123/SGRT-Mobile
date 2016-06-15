@@ -38,7 +38,6 @@ import java.util.Map;
 
 import sfadmldb.sgrt.model.ParseJSONLogin;
 import sfadmldb.sgrt.R;
-import sfadmldb.sgrt.model.Setting;
 import sfadmldb.sgrt.model.secure;
 import sfadmldb.sgrt.model.user;
 
@@ -49,7 +48,7 @@ import sfadmldb.sgrt.model.user;
  *  @author Sébastien Fillion
  *  @version 1.0
  */
-public class login extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
 
     //Label for the username and the password
@@ -80,6 +79,7 @@ public class login extends AppCompatActivity {
     //Progress bar waiting on login
     ProgressBar progressBar;
 
+    //Object to call request to the server
     private RequestQueue requestQueue;
 
 
@@ -100,65 +100,62 @@ public class login extends AppCompatActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_login);
 
-        //Get the default setting and config of the app
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        Configuration config = getBaseContext().getResources().getConfiguration();
+            //Get the default setting and config of the app
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            Configuration config = getBaseContext().getResources().getConfiguration();
 
-        //Check if the language is the same of the default language, else he will replace the default by the actual language to keep the same language when we go to an other
-        //view.
-        String lang = settings.getString("LANG", "");
-        if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang)) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            config.locale = locale;
-            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-        }
-
-
-        //instantiate every element and bind each object with the element in the xml file with find by id
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        ImageView logo = (ImageView) findViewById(R.id.logoimg);
-
-        if (logo != null) {
-            if(Build.VERSION.SDK_INT >= 21){
-                setImageView21(logo,R.drawable.logotrans);
-            }else{
-                setImageView(logo,R.drawable.logotrans);
+            //Check if the language is the same of the default language, else he will replace the default by the actual language to keep the same language when we go to an other
+            //view.
+            String lang = settings.getString("LANG", "");
+            if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang)) {
+                Locale locale = new Locale(lang);
+                Locale.setDefault(locale);
+                config.locale = locale;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
             }
 
-        }
 
+            //instantiate every element and bind each object with the element in the xml file with find by id
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            ImageView logo = (ImageView) findViewById(R.id.logoimg);
+
+            if (logo != null) {
+                if(Build.VERSION.SDK_INT >= 21){
+                    setImageView21(logo,R.drawable.logotrans);
+                }else{
+                    setImageView(logo,R.drawable.logotrans);
+                }
+
+            }
 
             errorUsername = (TextView) findViewById(R.id.errorUsername);
-        errorPassword = (TextView) findViewById(R.id.errorPassword);
+            errorPassword = (TextView) findViewById(R.id.errorPassword);
 
-        textUsername = (EditText) findViewById(R.id.usernametxt);
-        textPassword = (EditText) findViewById(R.id.passwordtxt);
+            textUsername = (EditText) findViewById(R.id.usernametxt);
+            textPassword = (EditText) findViewById(R.id.passwordtxt);
 
-        btnLogin = (Button) findViewById(R.id.loginBtn);
-        btnfr = (Button) findViewById(R.id.btnFrench);
-        btnen = (Button) findViewById(R.id.btnEnglish);
+            btnLogin = (Button) findViewById(R.id.loginBtn);
+            btnfr = (Button) findViewById(R.id.btnFrench);
+            btnen = (Button) findViewById(R.id.btnEnglish);
 
-        //Create an object who implements the action of touch, a listener
-        ClickSurface touchListener = new ClickSurface();
+            //Create an object who implements the action of touch, a listener
+            ClickSurface touchListener = new ClickSurface();
 
-        //Add the listener to each button
-        btnLogin.setOnTouchListener(touchListener);
-        btnfr.setOnTouchListener(touchListener);
-        btnen.setOnTouchListener(touchListener);
+            //Add the listener to each button
+            btnLogin.setOnTouchListener(touchListener);
+            btnfr.setOnTouchListener(touchListener);
+            btnen.setOnTouchListener(touchListener);
 
             progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
             if (progressBar != null) {
                 progressBar.setVisibility(View.INVISIBLE);
             }
-
-
         }
     }
 
@@ -188,12 +185,14 @@ public class login extends AppCompatActivity {
                 }
                 else if(v.getId() == btnfr.getId())
                 {
+                    Setting.langue = "";
                     //Set french as the language for the application
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "").apply();
                     setLangRecreate("");
                 }
                 else if(v.getId() == btnen.getId())
                 {
+                    Setting.langue = "en";
                     //Set english as the language for the application
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("LANG", "en").apply();
                     setLangRecreate("en");
@@ -283,7 +282,7 @@ public class login extends AppCompatActivity {
         map.put("password", password);
         map.put("web", "true");
 
-        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, consultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
+        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, ConsultPanel.url + path, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject result) {
                 progressBar.setVisibility(View.INVISIBLE);
@@ -329,8 +328,8 @@ public class login extends AppCompatActivity {
      */
     private void loadActivity() {
 
-                Intent intent = new Intent(this, consultPanel.class);
-                startActivity(intent);
+                Intent intent = new Intent(this, ConsultPanel.class);
+                startActivityForResult(intent, PICK_CONTACT_REQUEST);
 
     }
 
@@ -383,21 +382,38 @@ public class login extends AppCompatActivity {
         setLangRecreate(Setting.langue);
     }
 
+    /**
+     * Method call to set the drawable of an imageview for api < 21
+     *
+     * @param i - the imageview
+     * @param number - resource id
+     */
     @SuppressWarnings("deprecation")
     public void setImageView(ImageView i, Integer number)
     {
         i.setImageDrawable(getResources().getDrawable(number));
     }
 
+    /**
+     * Method call to set the drawable of an imageview for api >= 21
+     *
+     * @param i - the imageview
+     * @param number - resource id
+     */
     @TargetApi(21)
     public void setImageView21(ImageView i, Integer number)
     {
         i.setImageDrawable(getResources().getDrawable(number,null));
     }
 
+    /**
+     * Method who add request to the queue
+     *
+     * @param request - ObjectRequest
+     */
     public void objectRequest(JsonObjectRequest request) {
         if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(login.this);
+            requestQueue = Volley.newRequestQueue(Login.this);
         }
             requestQueue.add(request);
 
